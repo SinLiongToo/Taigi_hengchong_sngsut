@@ -1,0 +1,200 @@
+[
+  {
+    "poj": "saⁿ-kak-hêng",
+    "han": "三角形",
+    "matched": "三角",
+    "audio_id": "335"
+  },
+  {
+    "poj": "chiàⁿ-hong-hêng",
+    "han": "正方形",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "tiông-hong-hêng",
+    "han": "長方形",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "chhiâ-ko-hêng",
+    "han": "斜糕形",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "chhiâ-tu-hêng",
+    "han": "斜拄形",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "ah-nn̄g-hêng",
+    "han": "鴨卵形",
+    "matched": "鴨卵",
+    "audio_id": "12135"
+  },
+  {
+    "poj": "khe-sìⁿ-hêng",
+    "han": "葵扇形",
+    "matched": "葵扇",
+    "audio_id": "10012"
+  },
+  {
+    "poj": "îⁿ-hêng",
+    "han": "圓形",
+    "matched": "圓形",
+    "audio_id": "53216"
+  },
+  {
+    "poj": "kiû-hêng",
+    "han": "球形",
+    "matched": "球",
+    "audio_id": "7602"
+  },
+  {
+    "poj": "tâu-á-hêng",
+    "han": "骰仔形",
+    "matched": "骰仔",
+    "audio_id": "10957"
+  },
+  {
+    "poj": "chui-thé",
+    "han": "錐體",
+    "matched": "錐",
+    "audio_id": "9284"
+  },
+  {
+    "poj": "khut-chhioh-kak",
+    "han": "屈尺角",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "tūn-kak",
+    "han": "鈍角",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "tiàu-kak",
+    "han": "吊角",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "gióng-kak",
+    "han": "仰角",
+    "matched": null,
+    "audio_id": null
+  },
+  {
+    "poj": "ti̍t-suànn",
+    "han": "直線",
+    "matched": "直線",
+    "audio_id": "53060"
+  },
+  {
+    "poj": "khiok-suànn",
+    "han": "曲線",
+    "matched": "曲線",
+    "audio_id": "51123"
+  },
+  {
+    "poj": "hôu",
+    "han": "弧",
+    "matched": "弧",
+    "audio_id": "20417"
+  },
+  {
+    "poj": "chho̍ah-kak-chōa",
+    "han": "斜角逝",
+    "matched": "斜角",
+    "audio_id": "7474"
+  },
+  {
+    "poj": "sui5-ti̍t",
+    "han": "垂直",
+    "matched": "垂",
+    "audio_id": "4798"
+  },
+  {
+    "poj": "pêng-hêng",
+    "han": "平行",
+    "matched": "平行",
+    "audio_id": "52635"
+  },
+  {
+    "poj": "khia-sò͘",
+    "han": "奇數",
+    "matched": "奇數",
+    "audio_id": "3818"
+  },
+  {
+    "poj": "ngó͘-sò͘",
+    "han": "偶數",
+    "matched": "偶",
+    "audio_id": "21068"
+  },
+  {
+    "poj": "hun-sò͘",
+    "han": "分數",
+    "matched": "分數",
+    "audio_id": "767"
+  },
+  {
+    "poj": "chê-thâu",
+    "han": "齊頭",
+    "matched": "齊頭",
+    "audio_id": "10988"
+  },
+  {
+    "poj": "pōe-sò͘",
+    "han": "倍數",
+    "matched": "倍數",
+    "audio_id": "54239"
+  },
+  {
+    "poj": "î-sò͘",
+    "han": "餘數",
+    "matched": "餘",
+    "audio_id": "22283"
+  },
+  {
+    "poj": "pêng-kin-sò͘",
+    "han": "平均數",
+    "matched": "平均",
+    "audio_id": "1716"
+  },
+  {
+    "poj": "thinn",
+    "han": "添",
+    "matched": "添",
+    "audio_id": "7536"
+  },
+  {
+    "poj": "kiám",
+    "han": "減",
+    "matched": "減",
+    "audio_id": "8549"
+  },
+  {
+    "poj": "siong-sîng",
+    "han": "相乘",
+    "matched": "乘",
+    "audio_id": "20799"
+  },
+  {
+    "poj": "pun",
+    "han": "分",
+    "matched": "分",
+    "audio_id": "593"
+  },
+  {
+    "poj": "pêⁿ-pêⁿ",
+    "han": "平平",
+    "matched": "平平",
+    "audio_id": "1700"
+  }
+]

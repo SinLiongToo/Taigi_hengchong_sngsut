@@ -1,0 +1,138 @@
+Total terms found: 41
+saⁿ-kak-hêng (三角形):
+  Syllable 1 [saⁿ]: parsed={'initial': 's', 'rhyme': 'aⁿ', 'tone': 1, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'aⁿ', 'tone': 7, 'isNeutral': False} -> audio_id=163(1) (base_fallback)
+  Syllable 2 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 8, 'isNeutral': False} -> audio_id=3386(1) (base_fallback)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+chiàⁿ-hong-hêng (正方形):
+  Syllable 1 [chiàⁿ]: parsed={'initial': 'ts', 'rhyme': 'iaⁿ', 'tone': 3, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'iaⁿ', 'tone': 2, 'isNeutral': False} -> audio_id=3278(1) (target)
+  Syllable 2 [hong]: parsed={'initial': 'h', 'rhyme': 'ong', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ong', 'tone': 7, 'isNeutral': False} -> audio_id=10920(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+tiông-hong-hêng (長方形):
+  Syllable 1 [tiông]: parsed={'initial': 't', 'rhyme': 'iong', 'tone': 5, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'iong', 'tone': 7, 'isNeutral': False} -> audio_id=5501(1) (target)
+  Syllable 2 [hong]: parsed={'initial': 'h', 'rhyme': 'ong', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ong', 'tone': 7, 'isNeutral': False} -> audio_id=10920(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+tn̂g-ko-hêng (長篙形):
+  Syllable 1 [tn̂g]: parsed={'initial': 't', 'rhyme': 'ng', 'tone': 5, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'ng', 'tone': 7, 'isNeutral': False} -> audio_id=161(1) (target)
+  Syllable 2 [ko]: parsed={'initial': 'k', 'rhyme': 'o', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'o', 'tone': 7, 'isNeutral': False} -> audio_id=9685(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+chhiâ-ko-hêng (斜糕形):
+  Syllable 1 [chhiâ]: parsed={'initial': 'tsh', 'rhyme': 'ia', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'ia', 'tone': 7, 'isNeutral': False} -> audio_id=7428(1) (base_fallback)
+  Syllable 2 [ko]: parsed={'initial': 'k', 'rhyme': 'o', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'o', 'tone': 7, 'isNeutral': False} -> audio_id=9685(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+kaⁿ-ná-hêng (橄欖形):
+  Syllable 1 [kaⁿ]: parsed={'initial': 'k', 'rhyme': 'aⁿ', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'aⁿ', 'tone': 7, 'isNeutral': False} -> audio_id=10656(1) (base_fallback)
+  Syllable 2 [ná]: parsed={'initial': 'n', 'rhyme': 'a', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'n', 'rhyme': 'a', 'tone': 1, 'isNeutral': False} -> audio_id=3397(1) (base_fallback)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+chhiâ-tu-hêng (斜拄形):
+  Syllable 1 [chhiâ]: parsed={'initial': 'tsh', 'rhyme': 'ia', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'ia', 'tone': 7, 'isNeutral': False} -> audio_id=7428(1) (base_fallback)
+  Syllable 2 [tu]: parsed={'initial': 't', 'rhyme': 'u', 'tone': 1, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'u', 'tone': 7, 'isNeutral': False} -> audio_id=10689(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+ah-nn̄g-hêng (鴨卵形):
+  Syllable 1 [ah]: parsed={'initial': '', 'rhyme': 'ah', 'tone': 4, 'isNeutral': False}, sandhi={'init': '', 'rhyme': 'a', 'tone': 2, 'isNeutral': False} -> audio_id=1300(1) (target)
+  Syllable 2 [nn̄g]: parsed={'initial': 'n', 'rhyme': 'ng', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'n', 'rhyme': 'ng', 'tone': 3, 'isNeutral': False} -> audio_id=12618(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+ke-nn̄g-hêng (雞卵形):
+  Syllable 1 [ke]: parsed={'initial': 'k', 'rhyme': 'e', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'e', 'tone': 7, 'isNeutral': False} -> audio_id=170(1) (target)
+  Syllable 2 [nn̄g]: parsed={'initial': 'n', 'rhyme': 'ng', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'n', 'rhyme': 'ng', 'tone': 3, 'isNeutral': False} -> audio_id=12618(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+khe-sìⁿ-hêng (葵扇形):
+  Syllable 1 [khe]: parsed={'initial': 'kh', 'rhyme': 'e', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'kh', 'rhyme': 'e', 'tone': 7, 'isNeutral': False} -> audio_id=3591(1) (base_fallback)
+  Syllable 2 [sìⁿ]: parsed={'initial': 's', 'rhyme': 'iⁿ', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'iⁿ', 'tone': 2, 'isNeutral': False} -> audio_id=3766(1) (base_fallback)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+îⁿ-hêng (圓形):
+  Syllable 1 [îⁿ]: parsed={'initial': '', 'rhyme': 'iⁿ', 'tone': 5, 'isNeutral': False}, sandhi={'init': '', 'rhyme': 'iⁿ', 'tone': 7, 'isNeutral': False} -> audio_id=6791(1) (target)
+  Syllable 2 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+kiû-hêng (球形):
+  Syllable 1 [kiû]: parsed={'initial': 'k', 'rhyme': 'iu', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'iu', 'tone': 7, 'isNeutral': False} -> audio_id=3277(1) (base_fallback)
+  Syllable 2 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+tâu-á-hêng (骰仔形):
+  Syllable 1 [tâu]: parsed={'initial': 't', 'rhyme': 'au', 'tone': 5, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'au', 'tone': 7, 'isNeutral': False} -> audio_id=3388(1) (target)
+  Syllable 2 [á]: parsed={'initial': '', 'rhyme': 'a', 'tone': 2, 'isNeutral': False}, sandhi={'init': '', 'rhyme': 'a', 'tone': 1, 'isNeutral': False} -> audio_id=4496(1) (target)
+  Syllable 3 [hêng]: parsed={'initial': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2105(1) (target)
+chui-thé (錐體):
+  Syllable 1 [chui]: parsed={'initial': 'ts', 'rhyme': 'ui', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'ui', 'tone': 7, 'isNeutral': False} -> audio_id=22425(1) (target)
+  Syllable 2 [thé]: parsed={'initial': 'th', 'rhyme': 'e', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'th', 'rhyme': 'e', 'tone': 2, 'isNeutral': False} -> audio_id=13281(1) (target)
+khut-chhioh-kak (屈尺角):
+  Syllable 1 [khut]: parsed={'initial': 'kh', 'rhyme': 'ut', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'kh', 'rhyme': 'ut', 'tone': 8, 'isNeutral': False} -> audio_id=3813(1) (base_fallback)
+  Syllable 2 [chhioh]: parsed={'initial': 'tsh', 'rhyme': 'ioh', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'io', 'tone': 2, 'isNeutral': False} -> audio_id=789(1) (base_fallback)
+  Syllable 3 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False} -> audio_id=3386(1) (target)
+tūn-kak (鈍角):
+  Syllable 1 [tūn]: parsed={'initial': 't', 'rhyme': 'un', 'tone': 7, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'un', 'tone': 3, 'isNeutral': False} -> audio_id=9141(1) (target)
+  Syllable 2 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False} -> audio_id=3386(1) (target)
+tiàu-kak (吊角):
+  Syllable 1 [tiàu]: parsed={'initial': 't', 'rhyme': 'iau', 'tone': 3, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'iau', 'tone': 2, 'isNeutral': False} -> audio_id=2114(1) (base_fallback)
+  Syllable 2 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False} -> audio_id=3386(1) (target)
+gióng-kak (仰角):
+  Syllable 1 [gióng]: parsed={'initial': 'g', 'rhyme': 'iong', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'g', 'rhyme': 'iong', 'tone': 1, 'isNeutral': False} -> audio_id=None (none)
+  Syllable 2 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False} -> audio_id=3386(1) (target)
+  --> WARNING: Missing audio ID for some syllable!
+ti̍t-suànn (直線):
+  Syllable 1 [ti̍t]: parsed={'initial': 't', 'rhyme': 'it', 'tone': 8, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'it', 'tone': 4, 'isNeutral': False} -> audio_id=7183(1) (target)
+  Syllable 2 [suànn]: parsed={'initial': 's', 'rhyme': 'uaⁿ', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'uaⁿ', 'tone': 3, 'isNeutral': False} -> audio_id=8151(1) (target)
+khiok-suànn (曲線):
+  Syllable 1 [khiok]: parsed={'initial': 'kh', 'rhyme': 'iok', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'kh', 'rhyme': 'iok', 'tone': 8, 'isNeutral': False} -> audio_id=4702(1) (base_fallback)
+  Syllable 2 [suànn]: parsed={'initial': 's', 'rhyme': 'uaⁿ', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'uaⁿ', 'tone': 3, 'isNeutral': False} -> audio_id=8151(1) (target)
+hô͘ (弧):
+  Syllable 1 [hô͘]: parsed={'initial': 'h', 'rhyme': 'oo', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'oo', 'tone': 5, 'isNeutral': False} -> audio_id=8252(1) (target)
+chho̍ah-kak-chōa (斜角逝):
+  Syllable 1 [chho̍ah]: parsed={'initial': 'tsh', 'rhyme': 'uah', 'tone': 8, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'ua', 'tone': 3, 'isNeutral': False} -> audio_id=7429(1) (base_fallback)
+  Syllable 2 [kak]: parsed={'initial': 'k', 'rhyme': 'ak', 'tone': 4, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'ak', 'tone': 8, 'isNeutral': False} -> audio_id=3386(1) (base_fallback)
+  Syllable 3 [chōa]: parsed={'initial': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False} -> audio_id=7902(1) (target)
+chhiâ-chōa (斜逝):
+  Syllable 1 [chhiâ]: parsed={'initial': 'tsh', 'rhyme': 'ia', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'ia', 'tone': 7, 'isNeutral': False} -> audio_id=7428(1) (base_fallback)
+  Syllable 2 [chōa]: parsed={'initial': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False} -> audio_id=7902(1) (target)
+thán-chho̍ah-chōa (坦斜逝):
+  Syllable 1 [thán]: parsed={'initial': 'th', 'rhyme': 'an', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'th', 'rhyme': 'an', 'tone': 1, 'isNeutral': False} -> audio_id=12837(1) (target)
+  Syllable 2 [chho̍ah]: parsed={'initial': 'tsh', 'rhyme': 'uah', 'tone': 8, 'isNeutral': False}, sandhi={'init': 'tsh', 'rhyme': 'ua', 'tone': 3, 'isNeutral': False} -> audio_id=7429(1) (base_fallback)
+  Syllable 3 [chōa]: parsed={'initial': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'ua', 'tone': 7, 'isNeutral': False} -> audio_id=7902(1) (target)
+sui5-ti̍t (垂直):
+  Syllable 1 [sui5]: parsed={'initial': 's', 'rhyme': 'ui', 'tone': 5, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'ui', 'tone': 7, 'isNeutral': False} -> audio_id=12241(1) (target)
+  Syllable 2 [ti̍t]: parsed={'initial': 't', 'rhyme': 'it', 'tone': 8, 'isNeutral': False}, sandhi={'init': 't', 'rhyme': 'it', 'tone': 8, 'isNeutral': False} -> audio_id=4373(1) (target)
+pîng-hâng (平行):
+  Syllable 1 [pîng]: parsed={'initial': 'p', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'ing', 'tone': 7, 'isNeutral': False} -> audio_id=3518(1) (target)
+  Syllable 2 [hâng]: parsed={'initial': 'h', 'rhyme': 'ang', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'ang', 'tone': 5, 'isNeutral': False} -> audio_id=2605(1) (target)
+khia-sò͘ (奇數):
+  Syllable 1 [khia]: parsed={'initial': 'kh', 'rhyme': 'ia', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'kh', 'rhyme': 'ia', 'tone': 7, 'isNeutral': False} -> audio_id=7226(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+ngó͘-sò͘ (偶數):
+  Syllable 1 [ngó͘]: parsed={'initial': 'ng', 'rhyme': 'oo', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'ng', 'rhyme': 'oo', 'tone': 1, 'isNeutral': False} -> audio_id=566(1) (base_fallback)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+hun-sò͘ (分數):
+  Syllable 1 [hun]: parsed={'initial': 'h', 'rhyme': 'un', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'un', 'tone': 7, 'isNeutral': False} -> audio_id=2045(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+chê-thâu (齊頭):
+  Syllable 1 [chê]: parsed={'initial': 'ts', 'rhyme': 'e', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'e', 'tone': 7, 'isNeutral': False} -> audio_id=3022(1) (target)
+  Syllable 2 [thâu]: parsed={'initial': 'th', 'rhyme': 'au', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'th', 'rhyme': 'au', 'tone': 5, 'isNeutral': False} -> audio_id=12031(1) (target)
+chê-thâu-siàu (齊頭數):
+  Syllable 1 [chê]: parsed={'initial': 'ts', 'rhyme': 'e', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'e', 'tone': 7, 'isNeutral': False} -> audio_id=3022(1) (target)
+  Syllable 2 [thâu]: parsed={'initial': 'th', 'rhyme': 'au', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'th', 'rhyme': 'au', 'tone': 7, 'isNeutral': False} -> audio_id=5122(1) (target)
+  Syllable 3 [siàu]: parsed={'initial': 's', 'rhyme': 'iau', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'iau', 'tone': 3, 'isNeutral': False} -> audio_id=11105(1) (target)
+pōe-sò͘ (倍數):
+  Syllable 1 [pōe]: parsed={'initial': 'p', 'rhyme': 'ue', 'tone': 7, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'ue', 'tone': 3, 'isNeutral': False} -> audio_id=11350(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+î-sò͘ (餘數):
+  Syllable 1 [î]: parsed={'initial': '', 'rhyme': 'i', 'tone': 5, 'isNeutral': False}, sandhi={'init': '', 'rhyme': 'i', 'tone': 7, 'isNeutral': False} -> audio_id=4823(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+pêng-kin-sò͘ (平均數):
+  Syllable 1 [pêng]: parsed={'initial': 'p', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'ing', 'tone': 7, 'isNeutral': False} -> audio_id=3518(1) (target)
+  Syllable 2 [kin]: parsed={'initial': 'k', 'rhyme': 'in', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'in', 'tone': 7, 'isNeutral': False} -> audio_id=4488(1) (target)
+  Syllable 3 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+chí-sò͘ (指數):
+  Syllable 1 [chí]: parsed={'initial': 'ts', 'rhyme': 'i', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'ts', 'rhyme': 'i', 'tone': 1, 'isNeutral': False} -> audio_id=563(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+hâm-sò͘ (函數):
+  Syllable 1 [hâm]: parsed={'initial': 'h', 'rhyme': 'am', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'h', 'rhyme': 'am', 'tone': 7, 'isNeutral': False} -> audio_id=3697(1) (target)
+  Syllable 2 [sò͘]: parsed={'initial': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'oo', 'tone': 3, 'isNeutral': False} -> audio_id=6479(1) (target)
+thinn (添):
+  Syllable 1 [thinn]: parsed={'initial': 'th', 'rhyme': 'iⁿ', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'th', 'rhyme': 'iⁿ', 'tone': 1, 'isNeutral': False} -> audio_id=784(1) (target)
+kiám (減):
+  Syllable 1 [kiám]: parsed={'initial': 'k', 'rhyme': 'iam', 'tone': 2, 'isNeutral': False}, sandhi={'init': 'k', 'rhyme': 'iam', 'tone': 2, 'isNeutral': False} -> audio_id=8524(1) (target)
+siong-sîng (相乘):
+  Syllable 1 [siong]: parsed={'initial': 's', 'rhyme': 'iong', 'tone': 1, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'iong', 'tone': 7, 'isNeutral': False} -> audio_id=166(1) (target)
+  Syllable 2 [sîng]: parsed={'initial': 's', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False}, sandhi={'init': 's', 'rhyme': 'ing', 'tone': 5, 'isNeutral': False} -> audio_id=2427(1) (target)
+pun (分):
+  Syllable 1 [pun]: parsed={'initial': 'p', 'rhyme': 'un', 'tone': 1, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'un', 'tone': 1, 'isNeutral': False} -> audio_id=585(1) (target)
+pêⁿ-pêⁿ (平平):
+  Syllable 1 [pêⁿ]: parsed={'initial': 'p', 'rhyme': 'eⁿ', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'eⁿ', 'tone': 7, 'isNeutral': False} -> audio_id=6342(1) (target)
+  Syllable 2 [pêⁿ]: parsed={'initial': 'p', 'rhyme': 'eⁿ', 'tone': 5, 'isNeutral': False}, sandhi={'init': 'p', 'rhyme': 'eⁿ', 'tone': 5, 'isNeutral': False} -> audio_id=1643(1) (target)
+Terms with missing audio: 1
