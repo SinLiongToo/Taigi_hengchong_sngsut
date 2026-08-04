@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>形數羅盤 Shape &amp; Number Compass — 台語數學探索</title>
+
+<style>
+
+:root{
+
+  --navy:#0F1B2D;
+
+  --slate:#1E3A5F;
+
+  --amber:#F5A623;
+
+  --cream:#F8F4ED;
+
+  --sage:#7FB5A0;
+
+  --bg:var(--cream);
+
+  --panel:#FFFFFF;
+
+  --ink:var(--navy);
+
+  --ink-soft:#4A5A6E;
+
+  --line:rgba(15,27,45,0.12);
+
+  --shadow:0 10px 30px rgba(15,27,45,0.10);
+
+  --radius:20px;
+
+}
+
+[data-theme="dark"]{
+
+  --bg:var(--navy);
+
+  --panel:#152742;
+
+  --ink:var(--cream);
+
+  --ink-soft:#B9C6D6;
+
+  --line:rgba(248,244,237,0.14);
+
+  --shadow:0 10px 30px rgba(0,0,0,0.45);
+
+}
+
+*{box-sizing:border-box;}
+
+html,body{margin:0;padding:0;}
+
+body{
+
+  background:var(--bg);
+
+  color:var(--ink);
+
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Noto Sans TC",sans-serif;
+
+  min-height:100vh;
+
+  transition:background .35s ease,color .35s ease;
+
+  letter-spacing:.01em;
+
+}
+
+.wrap{max-width:1280px;margin:0 auto;padding:20px 20px 64px;}
+
+
+
+/* ---------- header ---------- */
+
+header{
+
+  display:flex;align-items:center;justify-content:space-between;
+
+  gap:16px;flex-wrap:wrap;
+
+  padding:8px 4px 24px;
+
+}
+
+.brand{display:flex;align-items:center;gap:14px;}
+
+.brand-mark{
+
+  width:46px;height:46px;border-radius:50%;
+
+  background:conic-gradient(from 220deg, var(--sage), var(--amber), var(--slate), var(--sage));
+
+  display:flex;align-items:center;justify-content:center;
+
+  box-shadow:var(--shadow);
+
+  flex:none;
+
+}
+
+.brand-mark span{
+
+  width:30px;height:30px;border-radius:50%;background:var(--bg);
+
+  display:flex;align-items:center;justify-content:center;
+
+  font-size:15px;font-weight:800;color:var(--amber);
+
+}
+
+.brand h1{font-size:1.15rem;margin:0;line-height:1.25;}
+
+.brand h1 small{display:block;font-weight:500;font-size:.72rem;color:var(--ink-soft);letter-spacing:.06em;}
+
+.hdr-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+.btn{
+
+  border:1px solid var(--line);
+
+  background:var(--panel);
+
+  color:var(--ink);
+
+  border-radius:999px;
+
+  padding:9px 16px;
+
+  font-size:.82rem;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  display:inline-flex;align-items:center;gap:6px;
+
+  transition:transform .15s ease, box-shadow .15s ease, background .2s ease;
+
+}
+
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);}
+
+.btn:focus-visible, .chip:focus-visible, .card:focus-visible, .tab:focus-visible{outline:3px solid var(--amber);outline-offset:2px;}
+
+.btn.primary{background:var(--amber);color:var(--navy);border-color:var(--amber);}
+
+.btn.ghost{background:transparent;}
+
+
+
+/* ---------- layout ---------- */
+
+.stage{
+
+  display:grid;
+
+  grid-template-columns:320px 1fr;
+
+  gap:24px;
+
+  align-items:start;
+
+}
+
+@media (max-width:860px){
+
+  .stage{grid-template-columns:1fr;}
+
+  .compass-col{order:1;}
+
+  .work-col{order:2;}
+
+}
+
+
+
+/* ---------- compass ---------- */
+
+.compass-col{
+
+  background:var(--panel);
+
+  border-radius:var(--radius);
+
+  box-shadow:var(--shadow);
+
+  padding:22px;
+
+  position:sticky;top:16px;
+
+}
+
+@media (max-width:860px){.compass-col{position:static;}}
+
+.compass-title{font-size:.95rem;font-weight:700;margin:0 0 4px;}
+
+.compass-sub{font-size:.75rem;color:var(--ink-soft);margin:0 0 18px;}
+
+.compass-svg-holder{display:flex;justify-content:center;margin-bottom:6px;}
+
+.compass-node{cursor:pointer;}
+
+.compass-node text{pointer-events:none;}
+
+.compass-node .node-bg{transition:transform .25s ease, filter .25s ease;transform-origin:center;}
+
+.compass-node:hover .node-bg{filter:brightness(1.08);}
+
+.compass-node[aria-pressed="true"] .node-bg{transform:scale(1.14);}
+
+
+
+/* Compass Text Contrast Styling */
+
+.compass-text {
+
+  font-family: inherit;
+
+  font-weight: 800;
+
+  pointer-events: none;
+
+  font-size: 11.5px;
+
+  fill: var(--ink); /* default text color, light in dark mode, dark in light mode */
+
+  transition: fill .25s ease;
+
+}
+
+.compass-text.sub {
+
+  font-size: 7.5px;
+
+  font-weight: 700;
+
+  opacity: 0.85;
+
+}
+
+/* If active: shapes, angles, numbers, symbols wedges are bright, so they need dark text */
+
+.compass-node[aria-pressed="true"] .compass-text {
+
+  fill: var(--navy); /* Always dark navy on bright wedges */
+
+}
+
+
+
+/* In dark mode, active wedges except lines need dark text. Inactive wedges need white text */
+
+[data-theme="dark"] .compass-text {
+
+  fill: #FFFFFF; /* Inactive wedges in dark mode get white text */
+
+}
+
+[data-theme="dark"] .compass-node[aria-pressed="true"] .compass-text {
+
+  fill: var(--navy); /* Active bright wedges get dark text */
+
+}
+
+
+
+
+
+.compass-center-label {
+
+  text-align: center;
+
+  margin-top: 12px;
+
+}
+
+.compass-center-label .zh {
+
+  font-size: 1.25rem;
+
+  font-weight: 800;
+
+  color: var(--ink);
+
+}
+
+.compass-center-label .en {
+
+  font-size: .8rem;
+
+  color: var(--amber); /* Always bright amber for readability and accent */
+
+  letter-spacing: .06em;
+
+  text-transform: uppercase;
+
+  font-weight: 700;
+
+  margin-top: 4px;
+
+}
+
+
+
+.mobile-chips{display:none;gap:8px;flex-wrap:wrap;margin-top:14px;}
+
+@media (max-width:860px){
+
+  .compass-svg-holder{display:none;}
+
+  .compass-center-label{display:none;}
+
+  .mobile-chips{display:flex;}
+
+}
+
+.chip{
+
+  border:1px solid var(--line);background:var(--bg);color:var(--ink);
+
+  border-radius:999px;padding:8px 14px;font-size:.8rem;font-weight:700;cursor:pointer;
+
+}
+
+.chip[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:var(--navy);}
+
+
+
+.progress-box{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
+
+.progress-box .label{font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+
+.progress-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;}
+
+.progress-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--amber));width:0%;transition:width .4s ease;}
+
+.progress-count{font-size:.72rem;color:var(--ink-soft);margin-top:6px;}
+
+
+
+/* ---------- workspace ---------- */
+
+.work-col{background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;min-height:520px;}
+
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap;}
+
+.tab{
+
+  background:transparent;border:none;padding:10px 16px;font-size:.85rem;font-weight:700;
+
+  color:var(--ink-soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;
+
+}
+
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--amber);}
+
+
+
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+
+.panel-head h2{margin:0;font-size:1.2rem;}
+
+.panel-head p{margin:2px 0 0;font-size:.8rem;color:var(--ink-soft);}
+
+
+
+/* card grid */
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+
+.card{
+
+  perspective:900px;height:172px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit;
+
+}
+
+.card-inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
+
+.card.flipped .card-inner{transform:rotateY(180deg);}
+
+.card-face{
+
+  position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;
+
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+
+  padding:10px;border:1px solid var(--line);text-align:center;
+
+}
+
+.card-front{background:var(--bg);color:var(--ink);}
+
+.card-front svg{width:56px;height:56px;margin-bottom:8px;}
+
+.card-front .han{font-weight:800;font-size:1rem;color:var(--ink);}
+
+.card-front .poj{font-size:.82rem;color:var(--ink-soft);margin-top:4px;font-weight:600;}
+
+.card-back{background:var(--slate);color:#fff;transform:rotateY(180deg);gap:4px;}
+
+.card-back .zh{font-weight:800;font-size:1.05rem;color:#fff;}
+
+.card-back .en{font-size:.85rem;color:rgba(255,255,255,0.95);}
+
+.card-back .note{font-size:.76rem;color:rgba(255,255,255,0.9);margin-top:8px;line-height:1.4;}
+
+.star-btn{
+
+  position:absolute;top:8px;right:8px;background:none;border:none;font-size:1rem;cursor:pointer;
+
+  color:var(--ink-soft);z-index:2;
+
+}
+
+.card.starred .star-btn{color:var(--amber);}
+
+.play-btn{
+
+  position:absolute;top:8px;left:8px;background:none;border:none;font-size:1.1rem;cursor:pointer;
+
+  color:var(--ink-soft);z-index:2;line-height:1;padding:4px;
+
+  transition:transform .15s ease, color .15s ease;
+
+}
+
+.play-btn:hover{
+
+  transform:scale(1.2);
+
+  color:var(--amber);
+
+}
+
+.play-btn.playing {
+
+  color: var(--amber);
+
+  animation: audioPulse 1.2s infinite ease-in-out;
+
+}
+
+.play-btn-group {
+
+  position: absolute;
+
+  top: 8px;
+
+  left: 8px;
+
+  z-index: 2;
+
+  display: flex;
+
+  gap: 4px;
+
+}
+
+.play-btn.sub {
+
+  position: static;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 6px;
+
+  padding: 2px 4px;
+
+  cursor: pointer;
+
+  color: var(--ink-soft);
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 2px;
+
+  transition: transform .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
+
+}
+
+.play-btn.sub:hover {
+
+  color: var(--amber);
+
+  border-color: var(--amber);
+
+  transform: scale(1.08);
+
+}
+
+.play-btn.sub.playing {
+
+  color: var(--amber);
+
+  border-color: var(--amber);
+
+  animation: audioPulse 1.2s infinite ease-in-out;
+
+}
+
+.play-btn-group {
+
+  position: absolute;
+
+  top: 8px;
+
+  left: 8px;
+
+  z-index: 2;
+
+  display: flex;
+
+  gap: 4px;
+
+}
+
+.play-btn.sub {
+
+  position: static;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  border-radius: 6px;
+
+  padding: 2px 4px;
+
+  cursor: pointer;
+
+  color: var(--ink-soft);
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 2px;
+
+  transition: transform .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
+
+}
+
+.play-btn.sub:hover {
+
+  color: var(--amber);
+
+  border-color: var(--amber);
+
+  transform: scale(1.08);
+
+}
+
+.play-btn.sub.playing {
+
+  color: var(--amber);
+
+  border-color: var(--amber);
+
+  animation: audioPulse 1.2s infinite ease-in-out;
+
+}
+
+@keyframes audioPulse {
+
+  0% { transform: scale(1); }
+
+  50% { transform: scale(1.3); filter: drop-shadow(0 0 5px var(--amber)); }
+
+  100% { transform: scale(1); }
+
+}
+
+.help-box {
+
+  background: var(--bg);
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  border: 1px solid var(--line);
+
+  margin-top: 10px;
+
+  transition: background 0.3s ease;
+
+}
+
+[data-theme="dark"] .help-box {
+
+  background: rgba(255, 255, 255, 0.04);
+
+}
+
+
+
+/* match game */
+
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
+
+.tile{
+
+  border:2px solid var(--line);border-radius:14px;background:var(--panel);padding:12px 8px;
+
+  cursor:pointer;text-align:center;font-weight:700;font-size:.85rem;min-height:78px;
+
+  display:flex;align-items:center;justify-content:center;
+
+  color:var(--ink);
+
+  transition:border-color .2s ease, background .2s ease;
+
+}
+
+.tile svg{width:34px;height:34px;}
+
+.tile[data-state="selected"]{border-color:var(--amber);background:rgba(245,166,35,.1);}
+
+.tile[data-state="matched"]{border-color:var(--sage);background:rgba(127,181,160,.18);opacity:.6;cursor:default;}
+
+.game-status{font-size:.85rem;color:var(--ink);font-weight:600;margin-bottom:14px;}
+
+
+
+/* help / readme */
+
+.help-content{font-size:.9rem;line-height:1.7;color:var(--ink-soft);}
+
+.help-content h3{color:var(--ink);font-size:1rem;margin:20px 0 6px;}
+
+.help-content h3:first-child{margin-top:0;}
+
+.help-content code{background:var(--bg);padding:2px 6px;border-radius:6px;font-size:.82rem;}
+
+.demo-box{
+
+  margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--bg);border:1px dashed var(--line);
+
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+
+}
+
+.demo-box svg{width:44px;height:44px;flex:none;}
+
+
+
+footer.note{margin-top:22px;font-size:.72rem;color:var(--ink-soft);text-align:center;}
+
+
+
+@media (prefers-reduced-motion: reduce){
+
+  *{transition:none !important;animation:none !important;}
+
+}
+
+</style>
+
+</head>
+
+<body data-theme="light">
+
+<div class="wrap">
+
+
+
+  <header>
+
+    <div class="brand">
+
+      <div class="brand-mark"><span>形</span></div>
+
+      <h1>形數羅盤<small>SHAPE &amp; NUMBER COMPASS · 台語 · 漢字 · 華文 · English</small></h1>
+
+    </div>
+
+    <div class="hdr-actions">
+
+      <button class="btn" id="themeBtn" type="button">🌙 暗色 Dark</button>
+
+      <button class="btn" id="exportMdBtn" type="button">⇩ Markdown</button>
+
+      <button class="btn" id="exportJsonBtn" type="button">⇩ JSON</button>
+
+      <button class="btn primary" id="helpBtn" type="button">? 說明 Help</button>
+
+    </div>
+
+  </header>
+
+
+
+  <div class="stage">
+
+    <!-- COMPASS -->
+
+    <aside class="compass-col">
+
+      <p class="compass-title">揀一項主題 Pick a topic</p>
+
+      <p class="compass-sub">Tap a wedge on the compass — the workspace on the right updates to match.</p>
+
+      <div class="compass-svg-holder">
+
+        <svg id="compassSvg" width="260" height="260" viewBox="0 0 260 260" role="group" aria-label="topic compass"></svg>
+
+      </div>
+
+      <div class="compass-center-label">
+
+        <div class="zh" id="centerZh">形狀</div>
+
+        <div class="en" id="centerEn">Shapes</div>
+
+      </div>
+
+      <div class="mobile-chips" id="mobileChips"></div>
+
+
+
+      <div class="progress-box">
+
+        <div class="label">學會 ê 詞 Terms starred</div>
+
+        <div class="progress-bar"><i id="progressFill"></i></div>
+
+        <div class="progress-count" id="progressCount">0 / 0</div>
+
+      </div>
+
+      <div class="speed-box" style="margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);">
+
+        <div class="label" style="font-size:.72rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+
+          <span>語音速度 Speed</span>
+
+          <span id="speedValue" style="font-weight:700; color:var(--amber);">0.8x</span>
+
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+
+          <input type="range" id="speedRate" min="0.5" max="2.0" step="0.1" value="0.8" style="width:100%; cursor:pointer; accent-color:var(--amber);">
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+
+    <!-- WORKSPACE -->
+
+    <section class="work-col">
+
+      <div class="tabs" role="tablist">
+
+        <button class="tab" data-tab="learn" role="tab" aria-selected="true">🔎 認識 Learn</button>
+
+        <button class="tab" data-tab="game" role="tab" aria-selected="false">🧩 配對 Match Game</button>
+
+        <button class="tab" data-tab="help" role="tab" aria-selected="false">📖 說明 Help / Readme</button>
+
+      </div>
+
+
+
+      <!-- LEARN -->
+
+      <div id="panel-learn">
+
+        <div class="panel-head">
+
+          <div>
+
+            <h2 id="learnTitle">形狀 Shapes</h2>
+
+            <p>Tap a card to flip it. Tap the star to save a word you've learned.</p>
+
+          </div>
+
+        </div>
+
+        <div class="card-grid" id="cardGrid"></div>
+
+      </div>
+
+
+
+      <!-- GAME -->
+
+      <div id="panel-game" style="display:none;">
+
+        <div class="panel-head">
+
+          <div>
+
+            <h2>配對遊戲 Match Game</h2>
+
+            <p>Match each shape with its Taigi name. Find every pair to win!</p>
+
+          </div>
+
+          <button class="btn" id="reshuffleBtn" type="button">🔀 Reshuffle</button>
+
+        </div>
+
+        <div class="game-status" id="gameStatus">Pick a shape, then pick its name.</div>
+
+        <div class="game-grid" id="gameGrid"></div>
+
+      </div>
+
+
+
+      <!-- HELP -->
+
+      <div id="panel-help" style="display:none;">
+
+        <div class="panel-head">
+
+          <div>
+
+            <h2>說明 Help &amp; Readme</h2>
+
+            <p>How this compass works, and where the words come from.</p>
+
+          </div>
+
+        </div>
+
+        <div class="help-content">
+
+          <h3>這是啥物？What is this?</h3>
+
+          <p>形數羅盤 teaches geometry and basic math words in four ways at once: <strong>Tâi-gí</strong> (Taiwanese Hokkien, written in POJ romanization), <strong>漢羅 Han characters</strong>, <strong>華文 Mandarin</strong>, and <strong>English</strong>. It's built for children — and anyone — curious about doing math in Taiwanese.</p>
+
+
+
+          <h3>按怎耍 How to use it</h3>
+
+          <p>1. On the left, the round <strong>compass</strong> has five wedges: 形狀 Shapes, 角 Angles, 線 Lines, 數字 Numbers, and 符號 Symbols. Tap one to load it.<br>
+
+          2. In the <strong>Learn</strong> tab, tap any card to flip it and reveal the word in all four languages, plus a kid-friendly note. Tap ⭐ to save words you've mastered.<br>
+
+          3. In the <strong>Match Game</strong> tab, tap a shape tile, then tap the Taigi name that goes with it. Matched pairs turn green.<br>
+
+          4. Your starred words are tracked in the progress bar on the left, and can be exported any time.</p>
+
+
+
+          <h3>羅馬字小提醒 About the romanization</h3>
+
+          <p>Taigi words are written in <strong>POJ (白話字)</strong>, e.g. <code>saⁿ-kak-hêng</code> for 三角形 "triangle." Tone marks sit above vowels — don't worry about reading them perfectly at first; just say the word out loud and compare it with the Mandarin and English.</p>
+
+
+
+          <h3>範例 Example</h3>
+
+          <div class="demo-box" id="demoBox"></div>
+
+
+
+          <h3>匯出 Exporting</h3>
+
+          <p>Use the <strong>Markdown</strong> or <strong>JSON</strong> buttons at the top any time to download the full glossary (with your starred words marked) as a file you can keep, print, or share with a teacher.</p>
+
+
+
+          <h3>詞源與字義故事 Source &amp; Etymology</h3>
+
+          <p>Vocabulary adapted from a community-maintained Taigi math-terms glossary (tutumasa.blogspot.com, "一寡數學 ê 台語詞"), cross-checked against Taiwanese Hokkien dictionaries. The names are often descriptive and visual:</p>
+
+          <div class="help-box">
+
+            <ul style="padding-left:20px; margin:0; font-size:.85rem; line-height:1.7;">
+
+              <li><strong>鴨卵形 (ah-nn̄g-hêng)</strong> / <strong>雞卵形 (ke-nn̄g-hêng)</strong>: Literally "duck-egg shape" and "chicken-egg shape" — these are the traditional Taiwanese terms for an oval or ellipse.</li>
+
+              <li><strong>橄欖形 (kaⁿ-ná-hêng)</strong>: Literally "olive shape" — colloquial term for a rhombus or diamond.</li>
+
+              <li><strong>長篙形 (tn̂g-ko-hêng)</strong>: Literally "long bamboo pole shape" — another colloquial name for a rectangle.</li>
+
+              <li><strong>斜糕形 (chhiâ-ko-hêng)</strong>: "Slanted/tilted traditional cake shape" — historically used for a rhombus or trapezoid.</li>
+
+              <li><strong>斜拄形 (chhiâ-tu-hêng)</strong>: "Slanted/tilted pillar shape" — the Taiwanese term for a trapezoid.</li>
+
+              <li><strong>屈尺角 (khut-chhioh-kak)</strong>: "L-shaped carpenter's square ruler corner" — refers to a right angle (90°).</li>
+
+              <li><strong>斜角逝 (chho̍ah-kak-chōa)</strong> / <strong>坦斜逝 (thán-chho̍ah-chōa)</strong>: "Slanted/tilted line" — colloquial terms for a diagonal line (where <em>逝 chōa/tsuā</em> means a line or path in Taigi).</li>
+
+              <li><strong>齊頭 (chê-thâu)</strong> / <strong>齊頭數 (chê-thâu-siàu)</strong>: "Aligned heads" — refers to neat, whole numbers or integers.</li>
+
+            </ul>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+
+  <footer class="note">形數羅盤 · Built for curious kids learning geometry in Tâi-gí, 華文 &amp; English · @史秀里冊房 Tō͘ Sìn-liông 製作 2026</footer>
+
+</div>
+
+
+
+<script>
+
+/* ============ DATA ============ */
+
+const CATS = [
+
+  {id:'shapes', zh:'形狀', en:'Shapes', icon:'tri', color:'#F5A623', terms:[
+
+    {poj:'saⁿ-kak-hêng', han:'三角形', zh:'三角形', en:'triangle', shape:'triangle', note: "Three straight sides, three corners."},
+
+    {poj:'chiàⁿ-saⁿ-kak-hêng', han:'正三角形', zh:'正三角形', en:'equilateral triangle', shape:'equilateral-tri', note: "A triangle with three equal sides and three 60° angles."},
+
+    {poj:'chiàⁿ-io-saⁿ-kak-hêng', han:'正腰三角形', zh:'等腰三角形', en:'isosceles triangle', shape:'isosceles-tri', note: "Literally \"straight-waist triangle\" — two equal sides."},
+
+    {poj:'chiàⁿ-hong-hêng / chèng-hong-hêng', han:'正方形', zh:'正方形', en:'square', shape:'square', note: "Four equal sides, four right angles."},
+
+    {poj:'tiông-hong-hêng', han:'長方形', zh:'長方形', en:'rectangle', shape:'rectangle', note: "Opposite sides equal, all right angles."},
+
+    {poj:'tn̂g-ko-hêng / tn̂g-tu-hêng / tn̂g-ti-hêng', han:'長篙形 / 長株形', zh:'長方形 (長篙形)', en:'rectangle (colloquial)', shape:'rectangle', note: "Literally \"long bamboo pole shape\" or \"long plant trunk shape\"."},
+
+    {poj:'chhiâ-ko-hêng', han:'斜糕形', zh:'菱形', en:'rhombus', shape:'rhombus', note: "A tilted square — four equal sides, slanted corners."},
+
+    {poj:'kaⁿ-ná-hêng / môa-phang-chho̍ah / môa-phang-tshuah', han:'橄欖形 / 麻芳斜 / 麻芳縒', zh:'菱形 (橄欖形)', en:'rhombus (colloquial)', shape:'rhombus', note: "Literally \"olive shape\" or \"sesame cake slice shape\"."},
+
+    {poj:'chhiâ-tu-hêng / chhiâ-ti-hêng', han:'斜拄形 / 斜柱形', zh:'梯形', en:'trapezoid', shape:'trapezoid', note: "One pair of sides is parallel, like a ladder rung."},
+
+    {poj:'ah-nn̄g-hêng / ti-io-hêng / tu-io-hêng', han:'鴨卵形 / 豬腰形', zh:'橢圓形', en:'oval', shape:'oval', note: "Literally \"duck-egg shape\" or \"pig-kidney shape\"."},
+
+    {poj:'ke-nn̄g-hêng / koe-nn̄g-hêng / tn̂g-ko-îⁿ', han:'雞卵形 / 長篙圓', zh:'橢圓形 (雞卵形)', en:'oval (egg)', shape:'oval', note: "Literally \"chicken-egg shape\" or \"long-pole circle\"."},
+
+    {poj:'khe-sìⁿ-hêng', han:'葵扇形', zh:'扇形', en:'fan / sector', shape:'fan', note: "Literally \"palm-fan shape\" — a slice of a circle."},
+
+    {poj:'îⁿ-hêng', han:'圓形', zh:'圓形', en:'circle', shape:'circle', note: "Every point is the same distance from the center."},
+
+    {poj:'kiû-hêng', han:'球形', zh:'球形', en:'sphere', shape:'sphere', note: "A round solid, like a ball."},
+
+    {poj:'tâu-á-hêng', han:'骰仔形', zh:'立方體', en:'cube', shape:'cube', note: "Literally \"dice shape\" — six square faces."},
+
+    {poj:'chui-thé / khe-sìⁿ-thé', han:'錐體 / 葵扇體', zh:'錐體', en:'cone', shape:'cone', note: "A round base narrowing to one point."},
+
+    {poj:'sì-kak-hêng', han:'四角形', zh:'四角形', en:'quadrilateral', shape:'quadrilateral', note: "A four-sided flat shape."},
+
+    {poj:'inn-tō', han:'圓壔', zh:'圓柱', en:'cylinder', shape:'cylinder', note: "A tube shape — two flat circles joined by a curved side."},
+
+    {poj:'kak-tō', han:'角壔', zh:'角柱', en:'prism', shape:'prism', note: "A solid with matching flat ends joined by flat sides."},
+
+    {poj:'chiam-so-á-hêng', han:'尖梭仔形', zh:'紡錘形', en:'spindle shape', shape:'spindle', note: "Pointy at both ends, wide in the middle, like a lemon."}
+
+  ]},
+
+  {id:'angles', zh:'角', en:'Angles', icon:'angle', color:'#4EBA6F', terms:[
+
+    {poj:'khut-chhioh-kak / ti̍t-kak', han:'屈尺角 / 直角', zh:'直角', en:'right angle', shape:'right-angle', note: "A perfect corner, like a square-ruler — 90°."},
+
+    {poj:'tūn-kak', han:'鈍角', zh:'鈍角', en:'obtuse angle', shape:'obtuse-angle', note: "Wider than a right angle — more than 90°."},
+
+    {poj:'tiàu-kak / tùi-chho̍ah', han:'吊角 / 對斜', zh:'對角', en:'diagonal corner', shape:'diagonal', note: "A corner or angle that sits opposite another."},
+
+    {poj:'gióng-kak', han:'仰角', zh:'仰角', en:'angle of elevation', shape:'elevation', note: "The angle you look up at, from the ground to something high."},
+
+    {poj:'chho̍ah-kak', han:'斜角', zh:'斜角', en:'oblique angle', shape:'oblique-angle', note: "Any angle that isn't a neat right angle."},
+
+    {poj:'tùi-kak', han:'對角', zh:'對角', en:'opposite angle', shape:'opposite-angle', note: "The angle sitting directly across from another, where two lines cross."},
+
+    {poj:'poo2-kak4', han:'補角', zh:'補角', en:'complementary angle', shape:'comp-angle', note: "Two angles that add up to a right angle (90°)."},
+
+    {poj:'ting2-kak4', han:'等角', zh:'等角', en:'equal angles', shape:'equal-angle', note: "Two angles that are exactly the same size."},
+
+    {poj:'tsin7-kak4', han:'盡角', zh:'頂點', en:'vertex', shape:'vertex', note: "The pointy corner where two sides meet."},
+
+    {poj:'thán-chhiâ', han:'坦斜', zh:'傾斜', en:'tilt / slant', shape:'tilt', note: "Leaning away from flat or upright."}
+
+  ]},
+
+  {id:'lines', zh:'線', en:'Lines', icon:'line', color:'#3A9AD9', terms:[
+
+    {poj:'ti̍t-suànn', han:'直線', zh:'直線', en:'straight line', shape:'straight', note: "The shortest path between two points."},
+
+    {poj:'khiok-suànn', han:'曲線', zh:'曲線', en:'curve', shape:'curve', note: "A line that bends smoothly."},
+
+    {poj:'hô͘', han:'弧', zh:'弧', en:'arc', shape:'arc', note: "A curved piece of a circle's edge."},
+
+    {poj:'chho̍ah-kak-chōa / thán-chho̍ah-chōa / tiàu-kak-tsua7', han:'斜角逝 / 坦斜逝 / 吊角迣', zh:'對角線', en:'diagonal line', shape:'diagonal-line', note: "A line joining two corners that aren't next to each other."},
+
+    {poj:'chhiâ-chōa', han:'斜逝', zh:'斜線', en:'slanted line', shape:'diagonal-line', note: "Literally \"slanted line\" — a line that is tilted."},
+
+    {poj:'sui5-ti̍t', han:'垂直', zh:'垂直', en:'perpendicular', shape:'perp', note: "Two lines crossing to make right angles."},
+
+    {poj:'pêng-hêng', han:'平行', zh:'平行', en:'parallel', shape:'parallel', note: "Two lines that never meet, like train tracks."},
+
+    {poj:'phau-bu̍t-sòaⁿ', han:'拋物線', zh:'拋物線', en:'parabola', shape:'parabola', note: "A U-shaped curve, like the path of a thrown ball."},
+
+    {poj:'chhiâ-bīn', han:'斜面', zh:'斜面', en:'sloped surface / incline', shape:'slope', note: "A slanted surface used to lift things easily."},
+
+    {poj:'tshiat-suànn', han:'切線', zh:'切線', en:'tangent line', shape:'tangent-line', note: "A line that just touches a curve at one point, without crossing it."},
+
+    {poj:'tshiat-tiám', han:'切點', zh:'切點', en:'tangent point', shape:'tangent-point', note: "The exact spot where a tangent line touches the curve."},
+
+    {poj:'tiong-tiám', han:'中點', zh:'中點', en:'midpoint', shape:'midpoint', note: "The point exactly halfway between two ends of a line."},
+
+    {poj:'iân-tn̂g-suànn', han:'延長線', zh:'延長線', en:'extension line', shape:'extension-line', note: "A line stretched further out past its original end."},
+
+    {poj:'tiám', han:'點', zh:'點', en:'point', shape:'point', note: "An exact spot in space — no size, just a position."},
+
+    {poj:'pênn-bīn', han:'平面', zh:'平面', en:'plane', shape:'plane', note: "A perfectly flat surface that goes on and on."},
+
+    {poj:'tn̂g', han:'長', zh:'長', en:'length', shape:'length', note: "How long something is, end to end."},
+
+    {poj:'khoah', han:'闊', zh:'寬', en:'width', shape:'width', note: "How wide something is, side to side."}
+
+  ]},
+
+  {id:'numbers', zh:'數字', en:'Numbers', icon:'num', color:'#FF7043', terms:[
+
+    {poj:'khia-sò͘', han:'奇數', zh:'奇數', en:'odd number', shape:'odd', note: "Can't be split evenly into two groups — 1, 3, 5…"},
+
+    {poj:'ngó͘-sò͘ / siang-sò͘', han:'偶數 / 雙數', zh:'偶數', en:'even number', shape:'even', note: "Splits evenly into two groups — 2, 4, 6…"},
+
+    {poj:'hun-sò͘', han:'分數', zh:'分數', en:'fraction', shape:'fraction', note: "A part of a whole, like ½ of a pizza."},
+
+    {poj:'chê-thâu / chôe-thâu', han:'齊頭', zh:'整數', en:'integer (neat-head)', shape:'whole', note: "Literally \"neat heads\" — numbers with no fractions."},
+
+    {poj:'chê-thâu-siàu / chôe-thâu-siàu', han:'齊頭數', zh:'整數 (齊頭數)', en:'integer', shape:'whole', note: "Literally \"neat-head number\" — colloquial word for integer."},
+
+    {poj:'pōe-sò͘', han:'倍數', zh:'倍數', en:'multiple', shape:'multiple', note: "What you get from counting by a number — multiples of 3: 3, 6, 9…"},
+
+    {poj:'î-sò͘', han:'餘數', zh:'餘數', en:'remainder', shape:'remainder', note: "What's left over after sharing equally."},
+
+    {poj:'pêng-kin-sò͘ / pêng-kun-sò͘', han:'平均數', zh:'平均數', en:'average', shape:'average', note: "Add everything up, then share it out evenly."},
+
+    {poj:'chí-sò͘', han:'指數', zh:'指數', en:'exponent', shape:'exponent', note: "A small number floating high that tells how many times to multiply the base."},
+
+    {poj:'hâm-sò͘', han:'函數', zh:'函數', en:'function', shape:'function', note: "A math machine that takes input, does a rule, and gives output."},
+
+    {poj:'sì-keh-á / sì-keh-nâ', han:'四格仔 / 四格籃', zh:'四象限', en:'four quadrants', shape:'quadrants', note: "Four sections of a coordinate plane split by axes."},
+
+    {poj:'lêng-hā', han:'零下', zh:'零下', en:'below zero', shape:'below-zero', note: "Temperatures below freezing point."},
+
+    {poj:'lêng-hun', han:'零分', zh:'零分', en:'zero points', shape:'zero-score', note: "A score of zero."},
+
+    {poj:'lân-san', han:'零星', zh:'零星 / 零碎', en:'fractional / scattered', shape:'remainder', note: "Scattered, tiny amounts or fractional values."},
+
+    {poj:'tham-sù put-tham-lio̍k', han:'貪四不貪六', zh:'四捨五入', en:'rounding (four-discard-six-keep)', shape:'average', note: "Colloquial Taiwanese rule for rounding numbers."},
+
+    {poj:'kiú-kiú-soàn', han:'九九算', zh:'九九乘法', en:'multiplication table', shape:'multiplication-table', note: "The 9x9 multiplication matrix."},
+
+    {poj:'ki-sò͘', han:'基數', zh:'基數', en:'cardinal number', shape:'cardinal', note: "A counting number — how many of something there are."},
+
+    {poj:'ūi-sò͘', han:'位數', zh:'位數', en:'digit place', shape:'digitplace', note: "Where a digit sits — ones, tens, hundreds…"}
+
+  ]},
+
+  {id:'symbols', zh:'符號', en:'Symbols', icon:'sym', color:'#26A69A', terms:[
+
+    {poj:'thinn', han:'添', zh:'加（+）', en:'plus', shape:'plus', note: "Putting groups together."},
+
+    {poj:'kiám', han:'減', zh:'減（－）', en:'minus', shape:'minus', note: "Taking away."},
+
+    {poj:'siong-sîng', han:'相乘', zh:'乘（×）', en:'times', shape:'times', note: "Adding a number to itself, many times over."},
+
+    {poj:'pun', han:'分', zh:'除（÷）', en:'divide', shape:'divide', note: "Sharing into equal groups."},
+
+    {poj:'pêⁿ-pêⁿ', han:'平平', zh:'等於（＝）', en:'equals', shape:'equals', note: "Both sides balance — they're the same."},
+
+    {poj:'îⁿ-chhioh', han:'圓尺', zh:'圓規', en:'compass (tool)', shape:'compass-tool', note: "A tool for drawing perfect circles."}
+
+  ]},
+
+  {id:'extra', zh:'好耍', en:'Fun Facts', icon:'star', color:'#9B51E0', terms:[
+
+    {poj:'tham-sù put-tham-lio̍k', han:'貪四不貪六', zh:'四捨五入', en:'rounding', shape:'round', note: 'The classic rule: keep a 4-or-below, bump up a 6-or-above — the memorable Taigi phrase means "want four, not six."'},
+
+    {poj:'kiú-kiú-soàn', han:'九九算', zh:'九九乘法', en:'times tables', shape:'timestable', note: 'The 1-to-9 multiplication table everyone practices.'},
+
+    {poj:'bīn-chek', han:'面積', zh:'面積', en:'area', shape:'area', note: 'How much flat space a shape covers.'},
+
+    {poj:'thé-chek', han:'體積', zh:'體積', en:'volume', shape:'volume', note: 'How much space a solid shape takes up.'},
+
+    {poj:'tùi-thīn', han:'對媵', zh:'對稱', en:'symmetry', shape:'symmetry', note: 'Both halves match if you fold it down the middle.'},
+
+    {poj:'pí-sò͘', han:'比數', zh:'比例', en:'ratio', shape:'ratio', note: 'Comparing two amounts side by side.'},
+
+    {poj:'hū-sò͘', han:'負數', zh:'負數', en:'negative number', shape:'negative', note: 'A number smaller than zero.'},
+
+    {poj:'ké-hun-sò͘', han:'假分數', zh:'假分數', en:'improper fraction', shape:'fraction', note: 'A fraction bigger than a whole, like 5/4.'},
+
+    {poj:'ki-lu̍t', han:'機率', zh:'機率', en:'probability', shape:'probability', note: 'How likely something is to happen, like rolling a six.'},
+
+    {poj:'tāi-sò͘', han:'代數', zh:'代數', en:'algebra', shape:'algebra', note: 'Math with letters standing in for unknown numbers.'},
+
+    {poj:'hē-sò͘', han:'係數', zh:'係數', en:'coefficient', shape:'coefficient', note: 'The number sitting in front of a letter, like the 3 in 3x.'},
+
+    {poj:'hâm-sò͘', han:'函數', zh:'函數', en:'function', shape:'function', note: 'A rule that turns one number into another, every time.'}
+
+  ]}
+
+];
+
+
+
+const ALL_TERMS = CATS.flatMap(c => c.terms.map(t => ({...t, cat:c.id})));
+
+
+
+/* ============ SHAPE ICONS (inline SVG) ============ */
+
+function shapeSVG(kind, stroke){
+
+  stroke = stroke || 'currentColor';
+
+  const s = `stroke="${stroke}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+
+  const fillS = `stroke="${stroke}" stroke-width="4" fill="none" stroke-linejoin="round"`;
+
+  switch(kind){
+
+    case 'triangle': return `<svg viewBox="0 0 64 64"><polygon points="32,10 58,54 6,54" ${fillS}/></svg>`;
+
+    case 'square': return `<svg viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="44" ${fillS}/></svg>`;
+
+    case 'rectangle': return `<svg viewBox="0 0 64 64"><rect x="6" y="18" width="52" height="28" ${fillS}/></svg>`;
+
+    case 'rhombus': return `<svg viewBox="0 0 64 64"><polygon points="32,6 56,32 32,58 8,32" ${fillS}/></svg>`;
+
+    case 'trapezoid': return `<svg viewBox="0 0 64 64"><polygon points="18,14 46,14 58,50 6,50" ${fillS}/></svg>`;
+
+    case 'oval': return `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="32" rx="26" ry="16" ${fillS}/></svg>`;
+
+    case 'fan': return `<svg viewBox="0 0 64 64"><path d="M32 32 L32 4 A28 28 0 0 1 55 46 Z" ${fillS}/></svg>`;
+
+    case 'circle': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" ${fillS}/></svg>`;
+
+    case 'sphere': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" ${fillS}/><ellipse cx="32" cy="32" rx="24" ry="9" ${s}/></svg>`;
+
+    case 'cube': return `<svg viewBox="0 0 64 64"><rect x="10" y="20" width="32" height="32" ${fillS}/><polygon points="10,20 20,10 52,10 42,20" ${fillS}/><polygon points="42,20 52,10 52,42 42,52" ${fillS}/></svg>`;
+
+    case 'cone': return `<svg viewBox="0 0 64 64"><polygon points="32,6 52,50 12,50" ${fillS}/><ellipse cx="32" cy="50" rx="20" ry="6" ${s}/></svg>`;
+
+    case 'right-angle': return `<svg viewBox="0 0 64 64"><path d="M10 10 V50 H54" ${s}/><rect x="10" y="38" width="12" height="12" ${s}/></svg>`;
+
+    case 'obtuse-angle': return `<svg viewBox="0 0 64 64"><path d="M10 50 H54" ${s}/><path d="M10 50 L40 12" ${s}/><path d="M22 50 A16 16 0 0 1 27 38" ${s}/></svg>`;
+
+    case 'diagonal': return `<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" ${fillS}/><line x1="8" y1="8" x2="56" y2="56" ${s}/></svg>`;
+
+    case 'elevation': return `<svg viewBox="0 0 64 64"><path d="M8 54 H56" ${s}/><path d="M8 54 L50 12" ${s}/><path d="M8 46 A22 22 0 0 1 20 51" ${s}/></svg>`;
+
+    case 'straight': return `<svg viewBox="0 0 64 64"><line x1="6" y1="32" x2="58" y2="32" ${s}/><circle cx="6" cy="32" r="3" fill="${stroke}"/><circle cx="58" cy="32" r="3" fill="${stroke}"/></svg>`;
+
+    case 'curve': return `<svg viewBox="0 0 64 64"><path d="M6 46 Q32 6 58 46" ${s}/></svg>`;
+
+    case 'arc': return `<svg viewBox="0 0 64 64"><path d="M10 50 A30 30 0 0 1 54 50" ${s}/></svg>`;
+
+    case 'diagonal-line': return `<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" ${fillS}/><line x1="56" y1="8" x2="8" y2="56" ${s}/></svg>`;
+
+    case 'perp': return `<svg viewBox="0 0 64 64"><line x1="32" y1="6" x2="32" y2="58" ${s}/><line x1="8" y1="32" x2="56" y2="32" ${s}/><rect x="32" y="32" width="10" height="10" ${s}/></svg>`;
+
+    case 'parallel': return `<svg viewBox="0 0 64 64"><line x1="8" y1="22" x2="56" y2="22" ${s}/><line x1="8" y1="42" x2="56" y2="42" ${s}/></svg>`;
+
+    case 'odd': return `<svg viewBox="0 0 64 64">${dots(5)}</svg>`;
+
+    case 'even': return `<svg viewBox="0 0 64 64">${dots(6)}</svg>`;
+
+    case 'fraction': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" ${fillS}/><path d="M32 8 A24 24 0 0 1 32 56 Z" fill="${stroke}" opacity="0.35"/><line x1="8" y1="32" x2="56" y2="32" ${s}/></svg>`;
+
+    case 'whole': return `<svg viewBox="0 0 64 64"><rect x="8" y="24" width="12" height="12" ${fillS}/><rect x="26" y="24" width="12" height="12" ${fillS}/><rect x="44" y="24" width="12" height="12" ${fillS}/></svg>`;
+
+    case 'multiple': return `<svg viewBox="0 0 64 64">${[8,24,40].map(x=>`<circle cx="${x+8}" cy="32" r="7" ${fillS}/>`).join('')}</svg>`;
+
+    case 'remainder': return `<svg viewBox="0 0 64 64">${dots(4)}<circle cx="54" cy="54" r="5" fill="${stroke}"/></svg>`;
+
+    case 'average': return `<svg viewBox="0 0 64 64"><line x1="6" y1="50" x2="58" y2="50" ${s}/><rect x="10" y="30" width="8" height="20" fill="${stroke}"/><rect x="24" y="14" width="8" height="36" fill="${stroke}"/><rect x="38" y="38" width="8" height="12" fill="${stroke}"/><line x1="6" y1="28" x2="58" y2="28" stroke="${stroke}" stroke-width="2" stroke-dasharray="4 3"/></svg>`;
+
+    case 'plus': return glyph('+', stroke);
+
+    case 'minus': return glyph('−', stroke);
+
+    case 'times': return glyph('×', stroke);
+
+    case 'divide': return glyph('÷', stroke);
+
+    case 'equals': return glyph('=', stroke);
+
+    case 'exponent': return `<svg viewBox="0 0 64 64"><text x="16" y="52" font-size="36" font-weight="800" fill="${stroke}">x</text><text x="40" y="28" font-size="22" font-weight="800" fill="${stroke}">n</text></svg>`;
+
+    case 'function': return `<svg viewBox="0 0 64 64"><text x="32" y="46" font-size="24" font-weight="800" text-anchor="middle" fill="${stroke}">f(x)</text></svg>`;
+
+    case 'equilateral-tri': return `<svg viewBox="0 0 64 64"><polygon points="32,8 58,54 6,54" ${fillS}/></svg>`;
+
+    case 'isosceles-tri': return `<svg viewBox="0 0 64 64"><polygon points="32,6 48,56 16,56" ${fillS}/></svg>`;
+
+    case 'pig-kidney': return `<svg viewBox="0 0 64 64"><path d="M32 14 C18 14 10 26 18 38 C24 46 32 48 38 42 C44 36 44 26 44 20 C44 14 36 14 32 14 Z" ${fillS}/></svg>`;
+
+    case 'quadrants': return `<svg viewBox="0 0 64 64"><line x1="8" y1="32" x2="56" y2="32" ${s}/><line x1="32" y1="8" x2="32" y2="56" ${s}/><rect x="38" y="14" width="12" height="12" fill="${stroke}" opacity="0.3"/><rect x="14" y="38" width="12" height="12" fill="${stroke}" opacity="0.3"/></svg>`;
+
+    case 'parabola': return `<svg viewBox="0 0 64 64"><path d="M10 14 Q32 54 54 14" ${s}/></svg>`;
+
+    case 'slope': return `<svg viewBox="0 0 64 64"><polygon points="10,50 54,50 54,18" ${fillS}/><path d="M22 50 A16 16 0 0 1 30 42" ${s}/></svg>`;
+
+    case 'compass-tool': return `<svg viewBox="0 0 64 64"><path d="M32 6 L32 14 M26 14 H38 M32 14 L18 56 M32 14 L46 56 M22 42 H42" ${s}/><circle cx="32" cy="14" r="2" fill="${stroke}"/></svg>`;
+
+    case 'multiplication-table': return `<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" ${fillS}/><line x1="24" y1="8" x2="24" y2="56" ${s}/><line x1="40" y1="8" x2="40" y2="56" ${s}/><line x1="8" y1="24" x2="56" y2="24" ${s}/><line x1="8" y1="40" x2="56" y2="40" ${s}/></svg>`;
+
+    case 'below-zero': return `<svg viewBox="0 0 64 64"><rect x="28" y="8" width="8" height="34" rx="4" ${fillS}/><circle cx="32" cy="46" r="10" ${fillS}/><line x1="16" y1="32" x2="48" y2="32" ${s}/></svg>`;
+
+    case 'zero-score': return `<svg viewBox="0 0 64 64"><text x="32" y="44" font-size="34" font-weight="800" text-anchor="middle" fill="${stroke}">0</text></svg>`;
+
+    case 'quadrilateral': return `<svg viewBox="0 0 64 64"><polygon points="10,20 48,10 54,50 14,46" ${fillS}/></svg>`;
+
+    case 'triangle-eq': return `<svg viewBox="0 0 64 64"><polygon points="32,8 58,54 6,54" ${fillS}/></svg>`;
+
+    case 'triangle-iso': return `<svg viewBox="0 0 64 64"><polygon points="32,4 50,54 14,54" ${fillS}/></svg>`;
+
+    case 'quad': return `<svg viewBox="0 0 64 64"><polygon points="10,14 54,8 58,50 6,54" ${fillS}/></svg>`;
+
+    case 'cylinder': return `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="22" ry="8" ${fillS}/><line x1="10" y1="14" x2="10" y2="48" ${s}/><line x1="54" y1="14" x2="54" y2="48" ${s}/><path d="M10 48 A22 8 0 0 0 54 48" ${s}/></svg>`;
+
+    case 'prism': return `<svg viewBox="0 0 64 64"><polygon points="16,54 16,26 32,16 32,44" ${fillS}/><polygon points="32,44 32,16 50,26 50,54" ${fillS}/><polygon points="16,26 32,16 50,26 34,36" ${fillS}/></svg>`;
+
+    case 'spindle': return `<svg viewBox="0 0 64 64"><path d="M6 32 Q32 4 58 32 Q32 60 6 32 Z" ${fillS}/></svg>`;
+
+    case 'oblique-angle': return `<svg viewBox="0 0 64 64"><path d="M8 50 H56" ${s}/><path d="M8 50 L44 14" ${s}/><path d="M18 50 A14 14 0 0 1 22 40" ${s}/></svg>`;
+
+    case 'opposite-angle': return `<svg viewBox="0 0 64 64"><line x1="8" y1="8" x2="56" y2="56" ${s}/><line x1="8" y1="56" x2="56" y2="8" ${s}/><path d="M32 20 A10 10 0 0 0 24 32" ${s}/><path d="M32 44 A10 10 0 0 0 40 32" ${s}/></svg>`;
+
+    case 'comp-angle': return `<svg viewBox="0 0 64 64"><path d="M8 54 H54" ${s}/><path d="M8 54 V10" ${s}/><path d="M8 54 L38 20" ${s}/><path d="M8 42 A12 12 0 0 1 18 54" ${s}/><path d="M18 54 A22 22 0 0 1 30 34" ${s}/></svg>`;
+
+    case 'equal-angle': return `<svg viewBox="0 0 64 64"><path d="M8 54 H56" ${s}/><path d="M8 54 L38 16" ${s}/><path d="M18 54 A14 14 0 0 1 23 43" stroke="${stroke}" stroke-width="3" fill="none"/><path d="M20 50 A9 9 0 0 1 23 44" stroke="${stroke}" stroke-width="3" fill="none"/></svg>`;
+
+    case 'vertex': return `<svg viewBox="0 0 64 64"><polygon points="10,54 54,54 32,12" ${fillS}/><circle cx="32" cy="12" r="5" fill="${stroke}"/></svg>`;
+
+    case 'tilt': return `<svg viewBox="0 0 64 64"><line x1="6" y1="54" x2="58" y2="54" stroke="${stroke}" stroke-width="2" stroke-dasharray="4 3"/><line x1="14" y1="54" x2="44" y2="12" ${s}/></svg>`;
+
+    case 'tangent-line': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="20" ${fillS}/><line x1="6" y1="14" x2="58" y2="14" ${s}/></svg>`;
+
+    case 'tangent-point': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="20" ${fillS}/><line x1="6" y1="16" x2="58" y2="16" ${s}/><circle cx="32" cy="16" r="4" fill="${stroke}"/></svg>`;
+
+    case 'midpoint': return `<svg viewBox="0 0 64 64"><line x1="8" y1="32" x2="56" y2="32" ${s}/><circle cx="8" cy="32" r="3" fill="${stroke}"/><circle cx="56" cy="32" r="3" fill="${stroke}"/><circle cx="32" cy="32" r="5" fill="${stroke}"/></svg>`;
+
+    case 'extension-line': return `<svg viewBox="0 0 64 64"><line x1="10" y1="32" x2="38" y2="32" ${s}/><line x1="38" y1="32" x2="58" y2="32" stroke="${stroke}" stroke-width="4" stroke-dasharray="5 4"/></svg>`;
+
+    case 'point': return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="6" fill="${stroke}"/></svg>`;
+
+    case 'plane': return `<svg viewBox="0 0 64 64"><polygon points="6,44 30,14 58,20 34,50" ${fillS}/></svg>`;
+
+    case 'length': return `<svg viewBox="0 0 64 64"><line x1="8" y1="32" x2="56" y2="32" ${s}/><path d="M8 32 L16 26 M8 32 L16 38" ${s}/><path d="M56 32 L48 26 M56 32 L48 38" ${s}/></svg>`;
+
+    case 'width': return `<svg viewBox="0 0 64 64"><line x1="32" y1="8" x2="32" y2="56" ${s}/><path d="M32 8 L26 16 M32 8 L38 16" ${s}/><path d="M32 56 L26 48 M32 56 L38 48" ${s}/></svg>`;
+
+    case 'cardinal': return `<svg viewBox="0 0 64 64"><circle cx="14" cy="32" r="7" fill="${stroke}"/><circle cx="32" cy="32" r="7" fill="${stroke}"/><circle cx="50" cy="32" r="7" fill="none" stroke="${stroke}" stroke-width="3"/></svg>`;
+
+    case 'digitplace': return `<svg viewBox="0 0 64 64"><rect x="6" y="22" width="14" height="20" ${fillS}/><rect x="25" y="22" width="14" height="20" ${fillS}/><rect x="44" y="22" width="14" height="20" ${fillS}/><text x="13" y="37" font-size="10" text-anchor="middle" fill="${stroke}">1</text><text x="32" y="37" font-size="10" text-anchor="middle" fill="${stroke}">0</text><text x="51" y="37" font-size="10" text-anchor="middle" fill="${stroke}">0</text></svg>`;
+
+    case 'probability': return `<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8" ${fillS}/><circle cx="24" cy="24" r="3.5" fill="${stroke}"/><circle cx="40" cy="24" r="3.5" fill="${stroke}"/><circle cx="24" cy="40" r="3.5" fill="${stroke}"/><circle cx="40" cy="40" r="3.5" fill="${stroke}"/><circle cx="32" cy="32" r="3.5" fill="${stroke}"/></svg>`;
+
+    case 'algebra': return glyph('x', stroke);
+
+    case 'coefficient': return `<svg viewBox="0 0 64 64"><text x="32" y="42" font-size="30" font-weight="800" text-anchor="middle" fill="${stroke}">3x</text></svg>`;
+
+    case 'round': return glyph('≈', stroke);
+
+    case 'timestable': return `<svg viewBox="0 0 64 64">${grid3(stroke)}</svg>`;
+
+    case 'area': return `<svg viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="44" fill="${stroke}" opacity="0.25" ${fillS}/></svg>`;
+
+    case 'volume': return `<svg viewBox="0 0 64 64"><rect x="10" y="20" width="32" height="32" fill="${stroke}" opacity="0.25" stroke="${stroke}" stroke-width="4"/><polygon points="10,20 20,10 52,10 42,20" ${fillS}/><polygon points="42,20 52,10 52,42 42,52" ${fillS}/></svg>`;
+
+    case 'symmetry': return `<svg viewBox="0 0 64 64"><polygon points="8,54 30,54 30,10" ${fillS}/><polygon points="56,54 34,54 34,10" ${fillS}/><line x1="32" y1="4" x2="32" y2="60" stroke="${stroke}" stroke-width="2" stroke-dasharray="4 3"/></svg>`;
+
+    case 'ratio': return `<svg viewBox="0 0 64 64"><rect x="8" y="36" width="18" height="16" fill="${stroke}"/><rect x="34" y="16" width="18" height="36" fill="${stroke}" opacity="0.5"/></svg>`;
+
+    case 'negative': return `<svg viewBox="0 0 64 64"><line x1="6" y1="32" x2="58" y2="32" ${s}/><circle cx="46" cy="32" r="3" fill="${stroke}"/><text x="46" y="50" font-size="10" text-anchor="middle" fill="${stroke}">0</text><circle cx="18" cy="32" r="4" fill="${stroke}"/><text x="18" y="20" font-size="10" text-anchor="middle" fill="${stroke}">−3</text></svg>`;
+
+    default: return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" ${fillS}/></svg>`;
+
+  }
+
+}
+
+function dots(n){
+
+  const pos=[[16,16],[48,16],[16,48],[48,48],[32,32],[32,10]];
+
+  let out='';
+
+  for(let i=0;i<n;i++){const p=pos[i%pos.length];out+=`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="currentColor"/>`;}
+
+  return out;
+
+}
+
+function glyph(ch, stroke){
+
+  return `<svg viewBox="0 0 64 64"><text x="32" y="42" font-size="38" font-weight="800" text-anchor="middle" fill="${stroke}">${ch}</text></svg>`;
+
+}
+
+function grid3(stroke){
+
+  let out='';
+
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+
+    out += `<rect x="${8+c*17}" y="${8+r*17}" width="13" height="13" fill="none" stroke="${stroke}" stroke-width="2"/>`;
+
+  }
+
+  return out;
+
+}
+
+
+
+/* compass icon mini versions for wedge center */
+
+function catIcon(id){
+
+  const map = {shapes:'triangle', angles:'right-angle', lines:'straight', numbers:'odd', symbols:'plus', extra:'round'};
+
+  return shapeSVG(map[id] || 'circle', '#fff');
+
+}
+
+
+
+/* ============ STATE ============ */
+
+let state = {
+
+  theme: localStorage.getItem('tgc_theme') || 'light',
+
+  activeCat: 'shapes',
+
+  activeTab: 'learn',
+
+  starred: JSON.parse(localStorage.getItem('tgc_starred') || '[]'),
+
+};
+
+
+
+function termKey(t){ return t.cat + '::' + t.poj; }
+
+
+
+/* ============ THEME ============ */
+
+function applyTheme(){
+
+  document.body.setAttribute('data-theme', state.theme);
+
+  document.getElementById('themeBtn').textContent = state.theme === 'light' ? '🌙 暗色 Dark' : '☀️ 明色 Light';
+
+  buildCompass();
+
+}
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+
+  state.theme = state.theme === 'light' ? 'dark' : 'light';
+
+  localStorage.setItem('tgc_theme', state.theme);
+
+  applyTheme();
+
+});
+
+
+
+/* ============ COMPASS ============ */
+
+function buildCompass(){
+
+  const svg = document.getElementById('compassSvg');
+
+  const cx=130, cy=130, rOuter=118, rInner=64;
+
+  const n = CATS.length;
+
+  let html = `<circle cx="${cx}" cy="${cy}" r="${rOuter}" fill="none" stroke="var(--line)" stroke-width="1.5"/>`;
+
+  CATS.forEach((cat, i) => {
+
+    const a0 = (-90 + i*(360/n)) * Math.PI/180;
+
+    const a1 = (-90 + (i+1)*(360/n)) * Math.PI/180;
+
+    const mid = (a0+a1)/2;
+
+    const x0o = cx + rOuter*Math.cos(a0), y0o = cy + rOuter*Math.sin(a0);
+
+    const x1o = cx + rOuter*Math.cos(a1), y1o = cy + rOuter*Math.sin(a1);
+
+    const x0i = cx + rInner*Math.cos(a0), y0i = cy + rInner*Math.sin(a0);
+
+    const x1i = cx + rInner*Math.cos(a1), y1i = cy + rInner*Math.sin(a1);
+
+    const path = `M${x0i},${y0i} L${x0o},${y0o} A${rOuter},${rOuter} 0 0 1 ${x1o},${y1o} L${x1i},${y1i} A${rInner},${rInner} 0 0 0 ${x0i},${y0i} Z`;
+
+    const labelR = (rOuter+rInner)/2 + 6;
+
+    const lx = cx + labelR*Math.cos(mid), ly = cy + labelR*Math.sin(mid);
+
+
+
+    html += `<g class="compass-node" data-cat="${cat.id}" tabindex="0" role="button" aria-pressed="${cat.id===state.activeCat}" aria-label="${cat.zh} ${cat.en}">
+
+      <path class="node-bg" d="${path}" fill="${cat.color}" opacity="${cat.id===state.activeCat?1:0.55}"/>
+
+      <text x="${lx}" y="${ly-4}" class="compass-text ${cat.id}" text-anchor="middle">${cat.zh}</text>
+
+      <text x="${lx}" y="${ly+10}" class="compass-text sub ${cat.id}" text-anchor="middle">${cat.en}</text>
+
+    </g>`;
+
+  });
+
+  html += `<circle cx="${cx}" cy="${cy}" r="${rInner-2}" fill="var(--panel)" stroke="var(--line)" stroke-width="1.5"/>`;
+
+  svg.innerHTML = html;
+
+  svg.querySelectorAll('.compass-node').forEach(node => {
+
+    node.addEventListener('click', () => selectCat(node.dataset.cat));
+
+    node.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectCat(node.dataset.cat);} });
+
+  });
+
+}
+
+function buildMobileChips(){
+
+  const holder = document.getElementById('mobileChips');
+
+  holder.innerHTML = CATS.map(c => `<button class="chip" data-cat="${c.id}" aria-pressed="${c.id===state.activeCat}">${c.zh} ${c.en}</button>`).join('');
+
+  holder.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => selectCat(chip.dataset.cat)));
+
+}
+
+function selectCat(id){
+
+  state.activeCat = id;
+
+  buildCompass();
+
+  buildMobileChips();
+
+  const cat = CATS.find(c=>c.id===id);
+
+  document.getElementById('centerZh').textContent = cat.zh;
+
+  document.getElementById('centerEn').textContent = cat.en;
+
+  document.getElementById('learnTitle').textContent = `${cat.zh} ${cat.en}`;
+
+  renderCards();
+
+  renderGame();
+
+}
+
+
+
+
+
+/* ============ TAIWANESE TONE SANDHI ENGINE ============ */
+
+const diacritics = {
+
+    2: { 'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú', 'm': 'ḿ', 'n': 'ń' },
+
+    3: { 'a': 'à', 'e': 'è', 'i': 'ì', 'o': 'ò', 'u': 'ù', 'm': 'm̀', 'n': 'ǹ' },
+
+    5: { 'a': 'â', 'e': 'ê', 'i': 'î', 'o': 'ô', 'u': 'û', 'm': 'm̂', 'n': 'n̂' },
+
+    7: { 'a': 'ā', 'e': 'ē', 'i': 'ī', 'o': 'ō', 'u': 'ū', 'm': 'm̄', 'n': 'n̄' },
+
+    8: { 'a': 'a̍', 'e': 'e̍', 'i': 'i̍', 'o': 'o̍', 'u': 'u̍', 'm': 'm̍', 'n': 'n̍' }
+
+};
+
+
+
+const syllableAudioMap = {"tsui1":"9284(1)","tsui7":"9284(1)","tsit8":"1(1)","it4":"2(1)","ting1":"39(1)","tshit4":"40(1)","kau2":"41(1)","kiu2":"42(1)","liau2":"43(1)","ji7":"44(1)","li7":"44(1)","jin5":"45(1)","lin5":"45(1)","lang5":"46(1)","jip8":"47(1)","lip8":"47(1)","pat4":"48(1)","peh4":"49(1)","pueh4":"49(1)","to1":"50(1)","tiau1":"51(1)","lat8":"52(1)","lik8":"53(1)","tsap8":"54(1)","sip8":"55(1)","poh4":"56(1)","pok4":"57(1)","iu7":"58(1)","tng7":"161(1)","sam1":"162(1)","sann1":"163(1)","tsiunn7":"164(1)","tshiunn7":"165(1)","siong7":"166(1)","e7":"167(1)","ha7":"168(1)","he7":"169(1)","ke7":"170(1)","e5":"171(1)","uan5":"172(1)","ku2":"173(1)","io1":"174(1)","khit4":"175(1)","ia7":"176(1)","bong5":"177(1)","huan5":"178(1)","huan7":"179(1)","tshian1":"180(1)","tshing1":"181(1)","tshe1":"182(1)","khau2":"183(1)","thoo2":"184(1)","su7":"185(1)","ta1":"186(1)","tai7":"187(1)","tua7":"188(1)","li2":"189(1)","lu2":"189(1)","tsi2":"191(1)","tsu2":"192(1)","ji2":"193(1)","tshun3":"194(1)","siau2":"195(1)","sio2":"196(1)","san1":"197(1)","suann1":"198(1)","kang1":"199(1)","kong1":"200(1)","ki2":"201(1)","tsi7":"202(1)","kin1":"203(1)","kun1":"203(1)","kan1":"204(1)","king1":"205(1)","tsai5":"206(1)","tsiah4":"207(1)","tshai5":"208(1)","put4":"557(1)","thiu2":"558(1)","ting3":"559(1)","tiong1":"560(1)","tiong3":"561(1)","tan1":"562(1)","tsi1":"563(1)","hoo7":"564(1)","goo7":"565(1)","ngoo2":"566(1)","tsenn2":"567(1)","tsinn2":"567(1)","tseh4":"569(1)","phak4":"570(1)","siu5":"571(1)","tann1":"572(1)","in2":"573(1)","un2":"573(1)","lai7":"574(1)","lue7":"575(1)","lak8":"578(1)","liok8":"579(1)","phann3":"580(1)","ling7":"581(1)","liong7":"582(1)","hiong1":"583(1)","hun1":"584(1)","pun1":"585(1)","tshiat4":"586(1)","un5":"587(1)","kiu1":"588(1)","kau1":"589(1)","hua1":"771(1)","hua3":"772(1)","phit4":"773(1)","tsin1":"774(1)","sing1":"775(1)","eh4":"778(1)","iu2":"779(1)","huan2":"780(1)","ping2":"781(1)","jim5":"782(1)","lim5":"782(1)","thian1":"783(1)","thinn1":"784(1)","thai3":"785(1)","hu1":"786(1)","tsio2":"787(1)","tshioh4":"789(1)","jiap8":"790(1)","liap8":"790(1)","sim1":"792(1)","tshiu2":"794(1)","ki1":"795(1)","bun5":"796(1)","tau2":"797(1)","hng1":"799(1)","hong1":"800(1)","jit8":"801(1)","lit8":"801(1)","guat8":"802(1)","gueh8":"803(1)","geh8":"803(1)","bak8":"804(1)","bok8":"805(1)","khiam3":"806(1)","phainn2":"808(1)","m7":"809(1)","pi2":"810(1)","mng5":"811(1)","moo5":"812(1)","si7":"813(1)","tsui2":"814(1)","sui2":"815(1)","hue2":"1211(1)","he2":"1211(1)","jiau2":"1212(1)","niau2":"1212(1)","hu7":"1213(1)","ping5":"1214(1)","phinn3":"1215(1)","ga5":"1216(1)","ge5":"1217(1)","gu5":"1218(1)","ong5":"1219(1)","se3":"1292(1)","si3":"1293(1)","piann2":"1294(1)","tom5":"1296(1)","tsann3":"1297(1)","hat8":"1299(1)","a2":"1300(1)","hu3":"1302(1)","sian1":"1303(1)","sian2":"1304(1)","kang7":"1305(1)","te7":"1307(1)","i2":"1310(1)","hiann1":"1311(1)","tsheh4":"1312(1)","tang1":"1376(1)","nah4":"1377(1)","tshut4":"1378(1)","khan1":"1379(1)","ka1":"1381(1)","ke1":"1383(1)","pau1":"1384(1)","pak4":"1385(1)","puan3":"1386(1)","puann3":"1387(1)","siap4":"1388(1)","tsiam3":"1389(1)","khah4":"1390(1)","khah8":"1391(1)","bau2":"1392(1)","mauh4":"1394(1)","khi3":"1395(1)","koo2":"1396(1)","ku3":"1397(1)","lo1":"1398(1)","khau3":"1399(1)","kio3":"1402(1)","kho2":"1405(1)","tai5":"1406(1)","su3":"1409(1)","gua7":"1410(1)","iang1":"1411(1)","gia5":"1634(1)","sit4":"1635(1)","loo5":"1636(1)","ling1":"1637(1)","ni1":"1637(1)","nai1":"1638(1)","kha2":"1639(1)","khiau2":"1640(1)","tshi7":"1641(1)","poo3":"1642(1)","penn5":"1643(1)","pinn5":"1643(1)","piann5":"1644(1)","iu3":"1646(1)","boo7":"1647(1)","pe1":"1648(1)","pe5":"1649(1)","tann2":"1650(1)","tuann3":"1651(1)","bi7":"1652(1)","bue7":"1653(1)","be7":"1653(1)","pun2":"1654(1)","tsiann3":"1655(1)","tsing3":"1656(1)","bio2":"1657(1)","bo2":"1658(1)","bu2":"1659(1)","bin5":"1660(1)","tsiap4":"1661(1)","gik8":"1835(1)","giok8":"1836(1)","kue1":"1837(1)","hia7":"1838(1)","kam1":"1839(1)","tshenn1":"1840(1)","tshinn1":"1840(1)","senn1":"1841(1)","sinn1":"1841(1)","ing7":"1843(1)","iong7":"1844(1)","tshan5":"1845(1)","iu5":"1846(1)","kah4":"1847(1)","sin1":"1849(1)","peh8":"1850(1)","pik8":"1851(1)","phi5":"1852(1)","phue5":"1853(1)","phe5":"1853(1)","tsioh8":"1856(1)","sik8":"1857(1)","hiat8":"1859(1)","kiau1":"2040(1)","hai7":"2041(1)","ik8":"2042(1)","kiann7":"2043(1)","jim7":"2044(1)","lim7":"2044(1)","hun7":"2045(1)","hong2":"2046(1)","i1":"2047(1)","huah8":"2048(1)","hiu1":"2049(1)","thin7":"2050(1)","tiau7":"2051(1)","kng1":"2054(1)","tsuan5":"2056(1)","ka7":"2099(1)","kiong7":"2101(1)","tsai3":"2102(1)","ping1":"2103(1)","tainn2":"2104(1)","hing5":"2105(1)","ko3":"2106(1)","liat8":"2107(1)","in3":"2109(1)","hah8":"2110(1)","hap8":"2111(1)","kap4":"2112(1)","kiat4":"2113(1)","tiau3":"2114(1)","tong5":"2115(1)","bing5":"2116(1)","mia5":"2117(1)","thoo3":"2119(1)","ann3":"2120(1)","hiann3":"2121(1)","hiong3":"2122(1)","ng3":"2123(1)","kiann2":"2124(1)","hue5":"2125(1)","he5":"2125(1)","sin3":"2126(1)","in1":"2127(1)","tsai7":"2128(1)","tue7":"2268(1)","tsun3":"2269(1)","ho2":"2272(1)","honn3":"2273(1)","ju5":"2274(1)","lu5":"2274(1)","hui1":"2275(1)","tsun5":"2277(1)","theh8":"2278(1)","tsiu2":"2279(1)","siu2":"2280(1)","an1":"2281(1)","tsiam1":"2283(1)","tsiu1":"2284(1)","phang5":"2286(1)","lian5":"2287(1)","ni5":"2288(1)","tsng1":"2289(1)","sut4":"2424(1)","tsiann5":"2425(1)","siann5":"2426(1)","sing5":"2427(1)","thuh4":"2428(1)","huann7":"2430(1)","khau1":"2431(1)","tshuann1":"2433(1)","siu1":"2434(1)","tsa2":"2435(1)","khiau1":"2436(1)","khik4":"2437(1)","u7":"2439(1)","tsu1":"2440(1)","tshu3":"2441(1)","tshu2":"2442(1)","si2":"2443(1)","su2":"2444(1)","kuann7":"2582(1)","ti5":"2584(1)","pah4":"2585(1)","tik4":"2586(1)","bi2":"2587(1)","iunn5":"2588(1)","lau2":"2589(1)","lau7":"2590(1)","hinn7":"2592(1)","hi7":"2592(1)","ni2":"2593(1)","ut8":"2594(1)","bah4":"2595(1)","jiok8":"2596(1)","sin5":"2597(1)","tsu7":"2598(1)","tsih8":"2599(1)","sik4":"2600(1)","hiann7":"2601(1)","ngai7":"2602(1)","hiat4":"2603(1)","hueh4":"2604(1)","huih4":"2604(1)","hang5":"2605(1)","hing7":"2606(1)","kiann5":"2607(1)","ui1":"2830(1)","sai1":"2831(1)","se1":"2832(1)","tshng3":"2850(1)","tshuan3":"2851(1)","phuann7":"2854(1)","tshun1":"2855(1)","phenn1":"2857(1)","ti7":"2858(1)","ui7":"2860(1)","ho5":"2861(1)","to2":"2862(1)","toh4":"2863(1)","hut8":"2864(1)","put8":"2865(1)","tsoh4":"2866(1)","tsok4":"2867(1)","tui7":"2871(1)","bian2":"2872(1)","ling2":"2874(1)","phut4":"2945(1)","thai5":"2946(1)","phuann3":"2947(1)","pat8":"2948(1)","piat8":"2949(1)","tsoo7":"2951(1)","kiap4":"2952(1)","nng7":"2953(1)","thun1":"2955(1)","gim5":"2956(1)","pui7":"2957(1)","kam5":"2958(1)","kann5":"2959(1)","khngh4":"2960(1)","khong7":"2961(1)","tshng2":"2962(1)","tsha2":"2964(1)","na7":"2965(1)","khip4":"2966(1)","tshue1":"2967(1)","hau2":"2968(1)","tai1":"3014(1)","tun2":"3016(1)","khng3":"3017(1)","hut4":"3018(1)","bue5":"3019(1)","thun7":"3020(1)","kham2":"3021(1)","tse7":"3022(1)","tshe7":"3023(1)","khenn1":"3024(1)","khinn1":"3024(1)","ngeh4":"3025(1)","iau1":"3048(1)","kim7":"3049(1)","miau7":"3050(1)","hau3":"3052(1)","song3":"3053(1)","ang1":"3055(1)","bue2":"3056(1)","be2":"3056(1)","jio7":"3057(1)","lio7":"3057(1)","kiok8":"3058(1)","phui3":"3059(1)","sun5":"3060(1)","tshng5":"3126(1)","sng5":"3127(1)","lang7":"3129(1)","khi7":"3133(1)","jim2":"3134(1)","lim2":"3134(1)","lun2":"3135(1)","tsi3":"3136(1)","bong7":"3137(1)","khuai3":"3138(1)","gua2":"3139(1)","ngiu2":"3141(1)","pan7":"3143(1)","tshe2":"3144(1)","khip8":"3145(1)","gim7":"3146(1)","pian1":"3147(1)","keh8":"3148(1)","hu5":"3149(1)","phoo5":"3150(1)","io2":"3151(1)","phue1":"3195(1)","tsau7":"3196(1)","tshau1":"3198(1)","kuat4":"3199(1)","pe2":"3200(1)","tim3":"3201(1)","la7":"3202(1)","iah8":"3203(1)","jiau3":"3204(1)","liau3":"3204(1)","tau5":"3206(1)","tsiat4":"3207(1)","kai2":"3209(1)","han7":"3211(1)","uann7":"3213(1)","kenn1":"3214(1)","kinn1":"3214(1)","kuainn1":"3215(1)","kuann1":"3216(1)","siah8":"3221(1)","khit8":"3222(1)","sok4":"3274(1)","poo7":"3275(1)","mui2":"3276(1)","kiu5":"3277(1)","tsiann2":"3278(1)","thua7":"3280(1)","ak4":"3281(1)","tim5":"3282(1)","bak4":"3283(1)","bit8":"3284(1)","tshiang5":"3285(1)","tshiong1":"3286(1)","sua1":"3287(1)","tsau3":"3288(1)","tsai1":"3328(1)","tse1":"3329(1)","tiau5":"3330(1)","kong5":"3331(1)","lam5":"3332(1)","phi2":"3334(1)","tso7":"3335(1)","su1":"3337(1)","han2":"3339(1)","too2":"3340(1)","too7":"3341(1)","oo7":"3383(1)","kian3":"3384(1)","kinn3":"3385(1)","kak4":"3386(1)","gian5":"3387(1)","tau7":"3388(1)","tshiah4":"3389(1)","tsau2":"3390(1)","tsiok4":"3391(1)","tshia1":"3394(1)","na2":"3397(1)","sia5":"3398(1)","guan2":"3401(1)","hong5":"3402(1)","ping7":"3518(1)","phing7":"3519(1)","kuai1":"3520(1)","tenn3":"3526(1)","tinn3":"3526(1)","sai2":"3527(1)","lai5":"3529(1)","le7":"3530(1)","king3":"3532(1)","liong2":"3582(1)","niu2":"3583(1)","ki5":"3585(1)","khu7":"3586(1)","tian2":"3587(1)","tshoo1":"3589(1)","kueh4":"3590(1)","kuih4":"3590(1)","khe1":"3591(1)","kau3":"3592(1)","tse3":"3593(1)","kng3":"3594(1)","kuan3":"3595(1)","tshi3":"3596(1)","tok4":"3599(1)","khap4":"3600(1)","tsut4":"3601(1)","kua3":"3602(1)","kng2":"3603(1)","sia3":"3605(1)","tsik4":"3606(1)","siu7":"3608(1)","tshan1":"3690(1)","hoo1":"3691(1)","khoo1":"3692(1)","bing7":"3693(1)","mia7":"3694(1)","tann3":"3695(1)","ham7":"3697(1)","tsiu3":"3699(1)","khun5":"3700(1)","khann1":"3701(1)","phe1":"3703(1)","ing1":"3753(1)","khu1":"3754(1)","phann7":"3756(1)","khia1":"3758(1)","mue7":"3759(1)","tshiap4":"3761(1)","m2":"3762(1)","tse2":"3763(1)","koo1":"3765(1)","senn3":"3766(1)","sinn3":"3766(1)","sing3":"3767(1)","kui3":"3806(1)","kuan1":"3808(1)","tiann7":"3810(1)","ting7":"3811(1)","kai3":"3812(1)","khut4":"3813(1)","phe3":"3816(1)","thiap4":"3817(1)","te2":"3819(1)","tue2":"3819(1)","tiam3":"3821(1)","hu2":"3873(1)","tshian5":"3874(1)","he1":"3875(1)","hit4":"3876(1)","ing2":"3877(1)","ong2":"3878(1)","thiam2":"3879(1)","liam7":"3881(1)","koo7":"3882(1)","kuai3":"3884(1)","kue3":"3885(1)","hoo3":"3886(1)","pang5":"3934(1)","pong5":"3935(1)","soo2":"3936(1)","phiann1":"3939(1)","phi1":"3940(1)","pho7":"3941(1)","buah4":"3942(1)","ah4":"3943(1)","thiu1":"3944(1)","khioh4":"3945(1)","bin2":"3946(1)","tu2":"3948(1)","thiah4":"3949(1)","liam1":"3950(1)","pha1":"3953(1)","phau1":"3954(1)","puann7":"3955(1)","phah4":"3956(1)","phik4":"3957(1)","ling5":"3958(1)","kuai2":"3959(1)","kuainn7":"3960(1)","khinn5":"3961(1)","puah8":"3962(1)","pueh8":"3963(1)","puih8":"3963(1)","thua1":"3964(1)","au2":"3965(1)","piann3":"3966(1)","tsiau1":"3967(1)","tsio1":"3968(1)","hong3":"3969(1)","pang3":"3970(1)","ong7":"3971(1)","hok8":"4184(1)","phue3":"4185(1)","pue1":"4186(1)","tong1":"4188(1)","pan2":"4189(1)","pi5":"4190(1)","pang1":"4191(1)","na5":"4193(1)","ko2":"4194(1)","tauh8":"4250(1)","phueh8":"4251(1)","pheh8":"4251(1)","tsam1":"4256(1)","ian5":"4257(1)","tsuh4":"4259(1)","tsuah4":"4260(1)","tsuat4":"4261(1)","am2":"4262(1)","huat4":"4263(1)","pha7":"4310(1)","phau3":"4311(1)","pho1":"4312(1)","pho3":"4313(1)","tsu3":"4315(1)","tu3":"4316(1)","iam7":"4318(1)","khong3":"4320(1)","tsenn1":"4322(1)","tsinn1":"4322(1)","pa5":"4323(1)","pe7":"4324(1)","but8":"4326(1)","mih8":"4327(1)","mngh8":"4327(1)","tsng7":"4328(1)","tit8":"4373(1)","ti1":"4375(1)","sia7":"4377(1)","tshai7":"4378(1)","khang1":"4379(1)","kiu3":"4414(1)","bong2":"4415(1)","kiunn1":"4416(1)","tsia2":"4417(1)","pui5":"4420(1)","khing2":"4421(1)","hi3":"4422(1)","khian3":"4424(1)","hue1":"4426(1)","phang1":"4427(1)","hoo2":"4482(1)","khiu5":"4483(1)","piau2":"4484(1)","pio2":"4485(1)","kauh4":"4486(1)","ngia5":"4487(1)","kin7":"4488(1)","kun7":"4488(1)","hann7":"4489(1)","kim1":"4490(1)","tiong2":"4491(1)","tiunn2":"4492(1)","tng5":"4493(1)","a1":"4496(1)","u2":"4498(1)","ting5":"4665(1)","tshim1":"4666(1)","thiann7":"4667(1)","pian7":"4668(1)","tshik4":"4669(1)","tshio1":"4689(1)","siok8":"4690(1)","po2":"4691(1)","thi3":"4694(1)","tsho3":"4695(1)","siah4":"4696(1)","tsian5":"4698(1)","tsing5":"4699(1)","iong2":"4700(1)","khiok4":"4702(1)","li5":"4703(1)","kau7":"4769(1)","teh4":"4771(1)","meh4":"4772(1)","kok8":"4774(1)","khak8":"4775(1)","lan2":"4776(1)","ai1":"4778(1)","phin2":"4779(1)","ha1":"4780(1)","sui5":"4782(1)","khe3":"4821(1)","khue3":"4821(1)","hai1":"4822(1)","i7":"4823(1)","kan3":"4824(1)","i5":"4825(1)","hai5":"4849(1)","kheh4":"4850(1)","si1":"4854(1)","ba7":"4856(1)","hang7":"4857(1)","te3":"4858(1)","thai7":"4896(1)","lut8":"4897(1)","au7":"4898(1)","kip4":"4900(1)","uan3":"4901(1)","tiam7":"4903(1)","pinn2":"4904(1)","pai3":"4905(1)","kuah4":"4906(1)","hiap8":"4978(1)","tih8":"4980(1)","tsainn2":"4981(1)","an3":"4984(1)","keh4":"4985(1)","thio1":"4986(1)","tha3":"4987(1)","hiannh4":"4988(1)","hinn3":"4989(1)","oo2":"4990(1)","ue2":"4990(1)","koo3":"4992(1)","ah8":"4998(1)","ke3":"5063(1)","ke5":"5065(1)","penn3":"5066(1)","pinn3":"5066(1)","boo2":"5067(1)","jiam2":"5069(1)","liam2":"5069(1)","tsha5":"5073(1)","kua1":"5074(1)","thiau7":"5075(1)","uai1":"5119(1)","tuann7":"5120(1)","tok8":"5121(1)","thau7":"5122(1)","tsuann5":"5124(1)","se2":"5127(1)","sue2":"5127(1)","tong7":"5129(1)","tin1":"5130(1)","siap8":"5131(1)","uah8":"5166(1)","phai3":"5167(1)","lau5":"5168(1)","liu5":"5169(1)","tshio7":"5170(1)","thuann3":"5171(1)","pu5":"5173(1)","te1":"5174(1)","tsa3":"5175(1)","tsuann3":"5176(1)","ui5":"5177(1)","ui3":"5216(1)","pa1":"5217(1)","khi5":"5219(1)","kui2":"5220(1)","kai1":"5221(1)","phun5":"5222(1)","sio1":"5224(1)","siong1":"5225(1)","siong3":"5226(1)","siunn3":"5227(1)","tuh4":"5228(1)","sing2":"5304(1)","bai5":"5305(1)","bi5":"5306(1)","khan3":"5307(1)","khuann3":"5308(1)","huah4":"5310(1)","ging2":"5311(1)","tshiu1":"5312(1)","kho1":"5313(1)","tshing7":"5315(1)","tshng1":"5316(1)","iok4":"5364(1)","ang5":"5365(1)","sng2":"5369(1)","luan2":"5370(1)","nai7":"5371(1)","pue7":"5373(1)","thai1":"5374(1)","the1":"5375(1)","kian7":"5376(1)","ti3":"5378(1)","kho5":"5449(1)","khoo2":"5452(1)","om7":"5454(1)","kio5":"5455(1)","khing7":"5456(1)","pik4":"5496(1)","long5":"5497(1)","tang7":"5498(1)","tiong5":"5500(1)","tiong7":"5501(1)","tshuann3":"5502(1)","kang3":"5504(1)","an7":"5505(1)","bian7":"5562(1)","bin7":"5563(1)","kik4":"5564(1)","im1":"5565(1)","tsiah8":"5570(1)","sit8":"5571(1)","hiunn1":"5572(1)","an2":"5691(1)","to3":"5707(1)","sing7":"5708(1)","ua2":"5709(1)","tsioh4":"5710(1)","tshiann3":"5711(1)","song5":"5712(1)","tat8":"5713(1)","kiam1":"5715(1)","uan1":"5716(1)","tsun2":"5717(1)","tshin3":"5718(1)","tang3":"5719(1)","tong3":"5720(1)","thak4":"5721(1)","khiang1":"5788(1)","hui2":"5789(1)","ko1":"5792(1)","mai1":"5794(1)","pu1":"5797(1)","hainn1":"5799(1)","kenn2":"5801(1)","kinn2":"5801(1)","haih4":"5803(1)","onn1":"5804(1)","tsim1":"5805(1)","poo1":"5857(1)","tiann5":"5858(1)","tho3":"5860(1)","nia5":"5861(1)","niu5":"5862(1)","sun1":"5875(1)","kiong1":"5877(1)","iong5":"5881(1)","thian2":"5885(1)","ban1":"5886(1)","kham3":"5888(1)","tsha1":"5890(1)","khoo3":"5896(1)","too5":"5949(1)","lin2":"5950(1)","thi2":"5951(1)","un1":"5952(1)","kun5":"5956(1)","kheh8":"5957(1)","e1":"5959(1)","ue1":"5959(1)","thuah4":"5960(1)","long3":"5982(1)","thann2":"5983(1)","jue5":"5984(1)","le5":"5984(1)","ban2":"5985(1)","giap8":"5986(1)","ngeh8":"5987(1)","thong2":"5989(1)","khun2":"5990(1)","luah8":"5991(1)","luah4":"5992(1)","bat4":"5993(1)","sa1":"5994(1)","tenn7":"5996(1)","tinn7":"5996(1)","sak4":"5997(1)","poo5":"5998(1)","tsun7":"5999(1)","tshih8":"6001(1)","hau7":"6003(1)","liau7":"6004(1)","si5":"6006(1)","huann2":"6007(1)","uann3":"6075(1)","tshiann5":"6076(1)","tim7":"6079(1)","sng1":"6081(1)","tho5":"6088(1)","khing1":"6089(1)","khong1":"6090(1)","sue1":"6149(1)","hap4":"6150(1)","khui3":"6152(1)","phu7":"6153(1)","phu5":"6154(1)","hai2":"6155(1)","tsim3":"6156(1)","siau1":"6224(1)","oo1":"6227(1)","hang1":"6228(1)","tia1":"6229(1)","eh8":"6230(1)","ueh8":"6230(1)","pan1":"6334(1)","thik4":"6337(1)","tshua7":"6338(1)","tshuah4":"6339(1)","thiann3":"6340(1)","ku1":"6341(1)","penn7":"6342(1)","pinn7":"6342(1)","hin5":"6376(1)","tiam1":"6377(1)","phua3":"6379(1)","tsoo2":"6380(1)","su5":"6423(1)","tsoo1":"6424(1)","ng1":"6426(1)","tsam7":"6427(1)","tshio3":"6428(1)","hun2":"6429(1)","lap8":"6430(1)","tsua2":"6477(1)","soo3":"6479(1)","phang2":"6480(1)","soh4":"6481(1)","khih4":"6482(1)","khuat4":"6483(1)","khueh4":"6484(1)","hang3":"6489(1)","hing1":"6490(1)","kui1":"6528(1)","tshe3":"6529(1)","meh8":"6530(1)","tshau3":"6531(1)","iunn2":"6532(1)","tsinn7":"6533(1)","bang5":"6535(1)","te5":"6537(1)","tshau2":"6538(1)","tsho2":"6539(1)","lam2":"6629(1)","tho2":"6667(1)","ki3":"6668(1)","pa3":"6669(1)","khi2":"6671(1)","thang3":"6672(1)","be5":"6673(1)","piang3":"6674(1)","tui1":"6675(1)","the3":"6676(1)","sang3":"6677(1)","to5":"6678(1)","siam2":"6790(1)","inn7":"6791(1)","tin7":"6793(1)","tu5":"6794(1)","ma2":"6799(1)","kut4":"6800(1)","tau3":"6802(1)","khian5":"6906(1)","ian2":"6907(1)","ka2":"6908(1)","ke2":"6909(1)","phian1":"6911(1)","phinn1":"6912(1)","tso3":"6913(1)","tsue3":"6913(1)","thing5":"6914(1)","ainn7":"6915(1)","iang7":"6915(1)","thau1":"6916(1)","tau1":"6917(1)","tsian2":"6918(1)","bu7":"7006(1)","pian2":"7009(1)","tsham1":"7011(1)","tshiang3":"7014(1)","tshiunn3":"7015(1)","lim1":"7018(1)","mng7":"7020(1)","tam1":"7021(1)","siann2":"7068(1)","lun1":"7070(1)","kok4":"7071(1)","pi1":"7073(1)","kian1":"7077(1)","po5":"7133(1)","kia3":"7136(1)","in5":"7137(1)","bat8":"7138(1)","tsiong1":"7139(1)","tsiong3":"7140(1)","tsuan1":"7141(1)","kia7":"7175(1)","tai3":"7177(1)","tua3":"7178(1)","tiunn1":"7179(1)","tng1":"7180(1)","kiong5":"7181(1)","tit4":"7183(1)","sua2":"7225(1)","khia7":"7226(1)","tsiong5":"7228(1)","sioh4":"7231(1)","tshing2":"7232(1)","khiat4":"7233(1)","so1":"7234(1)","ng2":"7235(1)","phong2":"7236(1)","tsiap8":"7288(1)","liam3":"7289(1)","hian1":"7293(1)","sau3":"7295(1)","pai5":"7297(1)","kut8":"7299(1)","khua3":"7301(1)","liah8":"7303(1)","tshai2":"7304(1)","tham3":"7305(1)","tsih4":"7307(1)","khang3":"7308(1)","thui1":"7310(1)","am1":"7311(1)","iam2":"7312(1)","om1":"7314(1)","khainn1":"7315(1)","pai7":"7317(1)","ka3":"7318(1)","tshia5":"7428(1)","tshuah8":"7429(1)","suan1":"7431(1)","tsok8":"7432(1)","bang7":"7435(1)","kenn3":"7438(1)","thang2":"7439(1)","hia1":"7441(1)","kuainn2":"7442(1)","mue5":"7443(1)","m5":"7443(1)","liau5":"7464(1)","sau1":"7466(1)","beh4":"7469(1)","suh4":"7470(1)","sat4":"7472(1)","sioh8":"7473(1)","liang5":"7474(1)","lui7":"7507(1)","tshian2":"7510(1)","thiam1":"7511(1)","u3":"7567(1)","song2":"7568(1)","khian1":"7570(1)","lue5":"7571(1)","bing2":"7572(1)","me2":"7573(1)","tshai1":"7574(1)","hian3":"7575(1)","hian7":"7576(1)","pan5":"7628(1)","hui5":"7629(1)","tinn1":"7630(1)","san2":"7631(1)","hun5":"7635(1)","ap8":"7637(1)","tshuh4":"7640(1)","gan2":"7642(1)","phio3":"7683(1)","that4":"7685(1)","tsiunn1":"7687(1)","leh8":"7688(1)","lueh8":"7688(1)","pun7":"7690(1)","ko5":"7692(1)","phoh4":"7714(1)","thinn7":"7716(1)","tsah4":"7718(1)","tsat4":"7719(1)","sue3":"7720(1)","sua3":"7721(1)","khong2":"7722(1)","hian5":"7723(1)","puah4":"7726(1)","tun5":"7779(1)","thuat4":"7780(1)","thut8":"7781(1)","poo2":"7782(1)","tsing1":"7783(1)","mai3":"7813(1)","o5":"7814(1)","ham1":"7815(1)","tshi1":"7817(1)","tshu1":"7817(1)","tsua5":"7818(1)","sut8":"7838(1)","phuah8":"7841(1)","pi7":"7842(1)","phue7":"7843(1)","phe7":"7843(1)","mai7":"7846(1)","siat4":"7848(1)","sinn7":"7849(1)","hue3":"7885(1)","he3":"7885(1)","huan3":"7886(1)","tham1":"7888(1)","lan1":"7891(1)","kue2":"7892(1)","nng2":"7893(1)","thau3":"7894(1)","jiok4":"7895(1)","lip4":"7895(1)","tak8":"7896(1)","tsit4":"7899(1)","thang1":"7900(1)","thong1":"7901(1)","tsua7":"7902(1)","thing2":"7903(1)","ia2":"8003(1)","tio3":"8004(1)","tshuan1":"8005(1)","pi3":"8006(1)","pue5":"8007(1)","nia7":"8009(1)","seh4":"8011(1)","suat4":"8012(1)","ting2":"8013(1)","hi5":"8084(1)","tsiau2":"8085(1)","lok8":"8086(1)","beh8":"8087(1)","ba5":"8088(1)","mua5":"8089(1)","png7":"8150(1)","suann3":"8151(1)","tshong1":"8157(1)","tshong3":"8158(1)","lo5":"8159(1)","phok4":"8160(1)","thi5":"8161(1)","khennh8":"8162(1)","nauh4":"8165(1)","sian7":"8166(1)","kainn1":"8167(1)","hiam3":"8168(1)","thih8":"8169(1)","tsu5":"8170(1)","iaunn1":"8171(1)","tshuan2":"8173(1)","tshui3":"8174(1)","sannh4":"8176(1)","liang1":"8246(1)","tuann1":"8247(1)","kham1":"8249(1)","po3":"8250(1)","tiunn5":"8251(1)","hoo5":"8252(1)","oo5":"8253(1)","pu3":"8286(1)","kuann5":"8287(1)","gan5":"8288(1)","tsun1":"8289(1)","siam5":"8290(1)","tsiu7":"8291(1)","to7":"8292(1)","bo7":"8322(1)","sun7":"8325(1)","ok4":"8341(1)","loo2":"8342(1)","sim7":"8343(1)","gang7":"8344(1)","tui5":"8345(1)","tsiong2":"8346(1)","tsiunn2":"8347(1)","pue2":"8350(1)","king2":"8351(1)","jiu5":"8353(1)","phiak8":"8354(1)","bok4":"8356(1)","bio5":"8357(1)","the5":"8358(1)","tshah4":"8360(1)","tshap4":"8361(1)","iap4":"8407(1)","tshue7":"8409(1)","tuh8":"8410(1)","tiap8":"8411(1)","phainn7":"8412(1)","kam2":"8414(1)","kann2":"8415(1)","san3":"8417(1)","suann2":"8418(1)","khi1":"8420(1)","thau2":"8421(1)","ne5":"8474(1)","thue3":"8475(1)","mi5":"8478(1)","tsang1":"8480(1)","tso2":"8481(1)","khuan2":"8519(1)","khuann2":"8520(1)","phu2":"8521(1)","khak4":"8522(1)","than2":"8523(1)","kiam2":"8524(1)","kang2":"8544(1)","khuah4":"8545(1)","thng1":"8549(1)","lam3":"8550(1)","bo5":"8563(1)","bu5":"8564(1)","thenn3":"8568(1)","gin7":"8570(1)","kau5":"8571(1)","iau2":"8572(1)","khim5":"8687(1)","huan1":"8688(1)","ue7":"8689(1)","puh4":"8696(1)","khun3":"8764(1)","tuan2":"8766(1)","khok8":"8767(1)","nge7":"8769(1)","ngi7":"8769(1)","tang5":"8774(1)","pit4":"8816(1)","tan2":"8817(1)","kiau2":"8819(1)","sun2":"8821(1)","tshue3":"8824(1)","kat4":"8827(1)","tseh8":"8829(1)","tsuat8":"8830(1)","an5":"8831(1)","jiong5":"8833(1)","liong5":"8833(1)","hip4":"8896(1)","tiunn3":"8899(1)","sin7":"8901(1)","khiunn1":"8902(1)","kiok4":"8929(1)","tshai3":"8930(1)","tioh8":"8981(1)","toh8":"8982(1)","hi1":"8983(1)","liah4":"8986(1)","lih8":"8987(1)","bih4":"8988(1)","le2":"9030(1)","lue2":"9030(1)","phing5":"9031(1)","mai2":"9038(1)","hui3":"9040(1)","tah4":"9041(1)","bau7":"9043(1)","than3":"9044(1)","uat8":"9045(1)","khu5":"9099(1)","phau2":"9100(1)","tshu7":"9102(1)","pai2":"9103(1)","tsin3":"9104(1)","soo1":"9134(1)","niu7":"9138(1)","giang1":"9139(1)","tun1":"9140(1)","tun3":"9141(1)","tun7":"9142(1)","liu2":"9143(1)","khai1":"9144(1)","khui1":"9145(1)","jun7":"9146(1)","lun7":"9146(1)","ing5":"9147(1)","gan7":"9213(1)","hiong5":"9215(1)","tsip8":"9216(1)","im2":"9223(1)","ng5":"9224(1)","luan7":"9283(1)","tshui1":"9284(1)","tsong5":"9285(1)","thng5":"9286(1)","thuan5":"9287(1)","siunn1":"9290(1)","thuann2":"9291(1)","li3":"9293(1)","tsau5":"9295(1)","khiang3":"9299(1)","hue7":"9300(1)","sa3":"9301(1)","phngh4":"9349(1)","hng5":"9351(1)","inn5":"9352(1)","thap4":"9354(1)","thah4":"9355(1)","thoo5":"9356(1)","thiong2":"9357(1)","thiam7":"9359(1)","un3":"9360(1)","so2":"9408(1)","hiam5":"9409(1)","hainn3":"9410(1)","siong2":"9421(1)","siunn7":"9422(1)","jia2":"9423(1)","lia2":"9423(1)","tshiu5":"9424(1)","ju2":"9425(1)","i3":"9426(1)","ai3":"9427(1)","tiuh4":"9475(1)","io5":"9476(1)","tshiau1":"9478(1)","khiu2":"9479(1)","hian2":"9480(1)","tsinn3":"9481(1)","me1":"9482(1)","mi1":"9482(1)","iah4":"9483(1)","tshiok8":"9484(1)","sam3":"9486(1)","sian3":"9487(1)","puann1":"9490(1)","tshiunn2":"9493(1)","kong3":"9494(1)","thin5":"9496(1)","am3":"9564(1)","ia5":"9567(1)","png1":"9568(1)","king7":"9570(1)","gong5":"9571(1)","hun3":"9573(1)","hioh4":"9633(1)","liu1":"9638(1)","tshi5":"9640(1)","ik4":"9641(1)","khue1":"9642(1)","biat8":"9682(1)","ko7":"9685(1)","tai2":"9686(1)","tsian1":"9687(1)","tsuann1":"9688(1)","piak4":"9689(1)","ian1":"9690(1)","suah4":"9691(1)","sah8":"9693(1)","tsiau3":"9716(1)","tsio3":"9717(1)","tng3":"9734(1)","tham5":"9735(1)","tsuann2":"9737(1)","gin5":"9738(1)","e2":"9739(1)","uann2":"9775(1)","pong7":"9776(1)","kim3":"9777(1)","pin2":"9780(1)","khio3":"9804(1)","tsueh4":"9806(1)","kin3":"9808(1)","ta3":"9812(1)","tsue7":"9814(1)","gi7":"9816(1)","siann3":"9852(1)","phing3":"9853(1)","nau2":"9855(1)","tsing2":"9856(1)","ku7":"9860(1)","ban7":"9861(1)","lak4":"9862(1)","lau3":"9863(1)","loh4":"9864(1)","loh8":"9865(1)","hioh8":"9974(1)","tsong3":"9976(1)","ho7":"9978(1)","hiu5":"9992(1)","tsong1":"9996(1)","tshat8":"10055(1)","tio5":"10056(1)","jiah4":"10058(1)","kha1":"10059(1)","tsuainn7":"10060(1)","kui7":"10061(1)","loo7":"10136(1)","thiau3":"10137(1)","gu7":"10144(1)","un7":"10146(1)","pian3":"10147(1)","at4":"10150(1)","hia5":"10151(1)","hiah4":"10152(1)","tshing3":"10256(1)","tsah8":"10257(1)","lui5":"10280(1)","phauh8":"10281(1)","tian7":"10283(1)","pa2":"10287(1)","khun1":"10288(1)","tiann2":"10354(1)","tshi2":"10356(1)","hiau1":"10374(1)","oh4":"10375(1)","uih8":"10376(1)","ia3":"10377(1)","tsak8":"10379(1)","ma7":"10384(1)","kinn5":"10413(1)","tuat8":"10417(1)","pu7":"10437(1)","kua2":"10438(1)","tsat8":"10439(1)","tui3":"10442(1)","mua1":"10444(1)","im3":"10446(1)","tso1":"10496(1)","tsham2":"10497(1)","siak4":"10499(1)","siang3":"10500(1)","tiah4":"10502(1)","tsang2":"10503(1)","khaunnh8":"10522(1)","tshik8":"10523(1)","bong1":"10524(1)","boo1":"10524(1)","tsham3":"10526(1)","phiat4":"10528(1)","khainn2":"10529(1)","kha3":"10530(1)","uat4":"10532(1)","me5":"10534(1)","thiong3":"10535(1)","tshing5":"10536(1)","thui5":"10558(1)","tshiunn1":"10559(1)","siam3":"10564(1)","tih4":"10565(1)","kun2":"10567(1)","buan2":"10568(1)","mua2":"10569(1)","phiau1":"10601(1)","tshat4":"10602(1)","au1":"10607(1)","au3":"10608(1)","han3":"10609(1)","suan7":"10610(1)","hannh4":"10613(1)","him5":"10645(1)","gi5":"10648(1)","tsin7":"10655(1)","kann1":"10656(1)","thng7":"10657(1)","hok4":"10661(1)","poh8":"10683(1)","sng3":"10684(1)","suan3":"10685(1)","kong2":"10687(1)","kuan2":"10688(1)","tu7":"10689(1)","tsang3":"10690(1)","tsiann1":"10691(1)","tue3":"10747(1)","kin2":"10751(1)","huat8":"10752(1)","thui2":"10753(1)","kue5":"10779(1)","hak4":"10783(1)","tshioh8":"10784(1)","sih8":"10803(1)","jin7":"10812(1)","lin7":"10812(1)","gi2":"10816(1)","gu2":"10816(1)","sueh4":"10822(1)","sia1":"10823(1)","kuann2":"10824(1)","so5":"10825(1)","seh8":"10852(1)","khin1":"10853(1)","liu3":"10855(1)","hng7":"10856(1)","uan2":"10857(1)","kann3":"10859(1)","phiann2":"10864(1)","gun5":"10865(1)","koh4":"10906(1)","khiah4":"10908(1)","tam3":"10914(1)","nia2":"10916(1)","hong7":"10920(1)","phinn7":"10938(1)","tse5":"10939(1)","tsue5":"10939(1)","tsiau5":"10940(1)","khiam7":"10959(1)","kiam3":"10962(1)","phok8":"10979(1)","phun3":"10980(1)","hiau5":"11002(1)","sim2":"11004(1)","sia2":"11005(1)","tsan3":"11007(1)","tsan5":"11008(1)","bio7":"11011(1)","tuann5":"11015(1)","iann2":"11017(1)","tshueh4":"11050(1)","iu1":"11051(1)","pih4":"11053(1)","nua2":"11055(1)","ngiau2":"11059(1)","lian2":"11060(1)","kiau7":"11062(1)","giah4":"11063(1)","tshiau5":"11098(1)","lio5":"11100(1)","tshok4":"11104(1)","siau3":"11105(1)","tsiam7":"11107(1)","tso5":"11109(1)","gak8":"11110(1)","piau1":"11150(1)","pio1":"11151(1)","boo5":"11154(1)","iunn7":"11155(1)","phuah4":"11157(1)","phun1":"11158(1)","siau5":"11184(1)","bun3":"11186(1)","ut4":"11189(1)","go5":"11190(1)","jiat8":"11203(1)","juah8":"11204(1)","jiau5":"11209(1)","puann5":"11210(1)","khap8":"11240(1)","tiu7":"11241(1)","king5":"11243(1)","khing5":"11245(1)","tshue5":"11247(1)","tshe5":"11247(1)","koo5":"11274(1)","thong7":"11277(1)","uan7":"11280(1)","lian7":"11281(1)","me7":"11283(1)","pa7":"11303(1)","mooh8":"11305(1)","phoo3":"11308(1)","phong7":"11309(1)","tsia3":"11323(1)","tshang1":"11324(1)","lian1":"11325(1)","po1":"11349(1)","pue3":"11350(1)","tsui5":"11351(1)","kho3":"11352(1)","tam5":"11355(1)","tshiann2":"11380(1)","tsenn3":"11382(1)","tu1":"11384(1)","siunn2":"11387(1)","tsian7":"11392(1)","tah8":"11395(1)","lun5":"11478(1)","tsia1":"11480(1)","jia1":"11482(1)","lia1":"11482(1)","tsui3":"11486(1)","tshoo3":"11487(1)","giap4":"11513(1)","phoo1":"11515(1)","lang3":"11516(1)","tan5":"11528(1)","ue5":"11531(1)","uann1":"11532(1)","go7":"11536(1)","nau7":"11565(1)","gam7":"11591(1)","ging5":"11592(1)","aih4":"11604(1)","piah4":"11605(1)","ing3":"11606(1)","hak8":"11608(1)","oh8":"11609(1)","pin5":"11637(1)","tsian3":"11640(1)","ham2":"11641(1)","tik8":"11643(1)","tiak8":"11644(1)","tsho1":"11647(1)","iat8":"11653(1)","tshiu7":"11698(1)","lok4":"11700(1)","lop4":"11701(1)","kueh8":"11702(1)","huainn5":"11736(1)","huinn5":"11736(1)","pun5":"11737(1)","hiann5":"11769(1)","inn3":"11773(1)","thng3":"11775(1)","bun7":"11776(1)","bong3":"11778(1)","khue5":"11806(1)","khe5":"11806(1)","bua5":"11810(1)","inn2":"11812(1)","pin3":"11824(1)","ha5":"11829(1)","pak8":"11830(1)","kuan7":"11831(1)","phong3":"11857(1)","hing3":"11860(1)","lui2":"11861(1)","tshin1":"11901(1)","gioh8":"11904(1)","niau1":"11905(1)","lua7":"11907(1)","phin5":"11908(1)","tue5":"11909(1)","nua3":"11946(1)","suan2":"11949(1)","tshenn2":"11952(1)","tshinn2":"11952(1)","tshann7":"11987(1)","tsinn5":"11988(1)","iam1":"11991(1)","hiam2":"11993(1)","tsenn7":"11995(1)","tsing7":"11996(1)","siu3":"12030(1)","thau5":"12031(1)","am7":"12032(1)","ann7":"12033(1)","thun5":"12090(1)","hann2":"12124(1)","heh4":"12125(1)","tshiak8":"12126(1)","tioh4":"12143(1)","tong2":"12186(1)","suainn7":"12188(1)","sip4":"12203(1)","lam7":"12205(1)","iann5":"12206(1)","so3":"12208(1)","tshiunn5":"12211(1)","khuan5":"12226(1)","gam5":"12229(1)","lio2":"12232(1)","sian5":"12234(1)","sui7":"12241(1)","bih8":"12243(1)","muai5":"12244(1)","sam2":"12245(1)","pun3":"12246(1)","khng1":"12247(1)","phang7":"12249(1)","tsong2":"12252(1)","penn1":"12286(1)","pinn1":"12286(1)","tsan1":"12287(1)","siann1":"12290(1)","tshang3":"12292(1)","tam2":"12293(1)","ioh4":"12296(1)","hiam1":"12347(1)","tsi5":"12348(1)","khok4":"12367(1)","lian3":"12409(1)","song1":"12433(1)","liam5":"12447(1)","lut4":"12449(1)","thut4":"12450(1)","tiam2":"12451(1)","konn5":"12452(1)","huann5":"12453(1)","ge3":"12474(1)","tsim2":"12478(1)","thok4":"12479(1)","tan3":"12480(1)","ngiau1":"12483(1)","lu1":"12484(1)","tuan3":"12486(1)","tuan7":"12487(1)","tsuann7":"12508(1)","phiah8":"12517(1)","ang3":"12518(1)","phiah4":"12519(1)","sui1":"12543(1)","phun2":"12547(1)","khiau3":"12548(1)","phio5":"12554(1)","hiauh4":"12588(1)","gio5":"12592(1)","ngiauh8":"12593(1)","thang5":"12594(1)","thiong5":"12595(1)","tsim5":"12596(1)","hooh4":"12614(1)","tsam3":"12615(1)","nng3":"12618(1)","nng1":"12619(1)","tsuan2":"12620(1)","tsuan7":"12621(1)","tng2":"12622(1)","tsiunn3":"12651(1)","tin3":"12653(1)","siang1":"12655(1)","giah8":"12741(1)","hiah8":"12742(1)","iann7":"12745(1)","liu7":"12746(1)","khia5":"12747(1)","sang1":"12749(1)","phan1":"12770(1)","lang2":"12771(1)","long2":"12772(1)","phak8":"12773(1)","sih4":"12795(1)","gai7":"12797(1)","pua3":"12806(1)","tshiam1":"12807(1)","phoo7":"12810(1)","tsin5":"12811(1)","kian2":"12812(1)","ge7":"12834(1)","tin5":"12835(1)","ioh8":"12836(1)","than1":"12837(1)","ham3":"12865(1)","phoo2":"12868(1)","kio7":"12870(1)","kiann3":"12897(1)","kuinn1":"12900(1)","lan7":"12902(1)","guan7":"12925(1)","phian3":"12927(1)","honn1":"12941(1)","phiang7":"12942(1)","khuan3":"12946(1)","giam5":"12947(1)","jiang2":"12948(1)","kuan5":"12963(1)","ann5":"12964(1)","tshiam2":"12965(1)","lang1":"12966(1)","tshinn5":"12967(1)","nua7":"12968(1)","le3":"12987(1)","bang2":"13007(1)","tak4":"13008(1)","phih4":"13010(1)","kiam5":"13052(1)","mi7":"13053(1)","uang1":"13084(1)","liap4":"13086(1)","nua5":"13088(1)","tsang5":"13089(1)","tinn5":"13114(1)","lan5":"13115(1)","lah8":"13116(1)","bueh8":"13117(1)","thih4":"13130(1)","hiang2":"13168(1)","hoh8":"13171(1)","lo7":"13188(1)","long1":"13190(1)","tshuan5":"13193(1)","thuann1":"13194(1)","nng5":"13212(1)","thah8":"13213(1)","thiap8":"13214(1)","gian3":"13216(1)","lam1":"13218(1)","tiah8":"13224(1)","thiann1":"13225(1)","thing3":"13226(1)","thak8":"13227(1)","thok8":"13228(1)","pio7":"13253(1)","tsak4":"13255(1)","liong3":"13273(1)","lu3":"13274(1)","hiann2":"13276(1)","giam7":"13277(1)","kiann1":"13278(1)","tshue2":"13280(1)","the2":"13281(1)","iam5":"13354(1)","giang3":"13356(1)","thio3":"13376(1)","phan3":"13381(1)","neh4":"13383(1)","nih4":"13383(1)","tshim5":"13384(1)","sai5":"13385(1)","tsan2":"13397(1)","tsng3":"13402(1)","gong7":"13412(1)","tshak8":"13413(1)","lo3":"13449(1)","siam1":"13460(1)","khiap4":"13461(1)","mooh4":"13467(1)","gau5":"13471(1)","uainn2":"13479(1)","phue2":"13481(1)","tshih4":"13484(1)","kan2":"13502(1)","bai2":"13516(1)","siann7":"13534(1)","tshoh4":"13538(1)","too3":"13539(1)","the7":"13546(1)","khiu7":"13551(1)","mau1":"13553(1)","khat4":"13554(1)","tsann7":"13556(1)","thun2":"13572(1)","siunn5":"13575(1)","sim3":"13576(1)","tshim2":"13578(1)","gan3":"13580(1)","hiu3":"13583(1)","han5":"13586(1)","siang7":"13588(1)","lap4":"13600(1)","tshenn3":"13603(1)","tshinn3":"13603(1)","ne1":"13609(1)","hmh4":"14374(1)","lau1":"14512(1)","bang3":"15312(1)","tsann2":"15756(1)","tsuah8":"16960(1)","siau7":"17113(1)","jiang7":"28264(1)","giang7":"28264(1)","long7":"29805(1)"};
+
+
+
+function isEnteringRhyme(rhyme) {
+
+    return rhyme.endsWith('p') || rhyme.endsWith('t') || rhyme.endsWith('k') || rhyme.endsWith('h');
+
+}
+
+
+
+function applyToneMark(initial, rhyme, tone) {
+
+    const word = initial + rhyme;
+
+    if (tone == 1 || tone == 4) return word;
+
+    
+
+    let vowelToAccent = "";
+
+    if (rhyme.includes('a')) {
+
+        vowelToAccent = 'a';
+
+    } else if (rhyme.includes('o͘') || rhyme.includes('o͘')) {
+
+        vowelToAccent = 'o';
+
+    } else if (rhyme.includes('oo')) {
+
+        vowelToAccent = 'o';
+
+    } else if (rhyme.includes('e')) {
+
+        vowelToAccent = 'e';
+
+    } else if (rhyme.includes('o')) {
+
+        vowelToAccent = 'o';
+
+    } else if (rhyme.includes('i') && rhyme.includes('u')) {
+
+        const idxI = rhyme.indexOf('i');
+
+        const idxU = rhyme.indexOf('u');
+
+        vowelToAccent = idxI > idxU ? 'i' : 'u';
+
+    } else if (rhyme.includes('i')) {
+
+        vowelToAccent = 'i';
+
+    } else if (rhyme.includes('u')) {
+
+        vowelToAccent = 'u';
+
+    } else if (rhyme.includes('ng')) {
+
+        vowelToAccent = 'n';
+
+    } else if (rhyme.includes('m')) {
+        vowelToAccent = 'm';
+    }
+    
+    if (!vowelToAccent) return word;
+    
+    const accentMap = diacritics[tone];
+    if (!accentMap || !accentMap[vowelToAccent]) return word;
+    
+    const accentedVowel = accentMap[vowelToAccent];
+    
+    if (rhyme.includes('oo') && vowelToAccent === 'o') {
+        const pos = word.indexOf('oo');
+        if (pos !== -1) {
+            return word.slice(0, pos) + accentedVowel + 'o' + word.slice(pos + 2);
+        }
+    }
+    
+    const lastIndex = word.lastIndexOf(vowelToAccent);
+    if (lastIndex !== -1) {
+        return word.slice(0, lastIndex) + accentedVowel + word.slice(lastIndex + 1);
+    }
+    
+    return word;
+}
+
+function calculateSandhiSyllable(initial, rhyme, tone) {
+    let sandhiInitial = initial;
+    let sandhiRhyme = rhyme;
+    let sandhiTone = tone;
+    let ruleDesc = "";
+    
+    switch(parseInt(tone)) {
+        case 1:
+            sandhiTone = 7;
+            ruleDesc = "Tone 1 ➔ Tone 7";
+            break;
+        case 2:
+            sandhiTone = 1;
+            ruleDesc = "Tone 2 ➔ Tone 1";
+            break;
+        case 3:
+            sandhiTone = 2;
+            ruleDesc = "Tone 3 ➔ Tone 2";
+            break;
+        case 4:
+            if (rhyme.endsWith('h')) {
+                sandhiRhyme = rhyme.slice(0, -1);
+                sandhiTone = 2;
+                ruleDesc = "Tone 4 ending in -h ➔ drops -h and becomes Tone 2";
+            } else {
+                sandhiTone = 8;
+                ruleDesc = "Tone 4 ending in -p/-t/-k ➔ becomes Tone 8";
+            }
+            break;
+        case 5:
+            sandhiTone = 7;
+            ruleDesc = "Tone 5 ➔ Tone 7";
+            break;
+        case 7:
+            sandhiTone = 3;
+            ruleDesc = "Tone 7 ➔ Tone 3";
+            break;
+        case 8:
+            if (rhyme.endsWith('h')) {
+                sandhiRhyme = rhyme.slice(0, -1);
+                sandhiTone = 3;
+                ruleDesc = "Tone 8 ending in -h ➔ drops -h and becomes Tone 3";
+            } else {
+                sandhiTone = 4;
+                ruleDesc = "Tone 8 ending in -p/-t/-k ➔ becomes Tone 4";
+            }
+            break;
+    }
+    
+    return { sandhiInitial, sandhiRhyme, sandhiTone, ruleDesc };
+}
+
+function calculateMultiSandhi(words) {
+    const results = [];
+    const N = words.length;
+    for (let i = 0; i < N; i++) {
+        results.push({
+            init: words[i].initial,
+            rhyme: words[i].rhyme,
+            tone: words[i].tone,
+            isNeutral: words[i].isNeutral
+        });
+    }
+    if (N <= 1) return results;
+    
+    const lastWord = words[N - 1];
+    const isLastNeutral = lastWord.isNeutral;
+    
+    if (isLastNeutral) {
+        for (let i = 0; i < N - 2; i++) {
+            const sandhi = calculateSandhiSyllable(words[i].initial, words[i].rhyme, words[i].tone);
+            results[i].init = sandhi.sandhiInitial;
+            results[i].rhyme = sandhi.sandhiRhyme;
+            results[i].tone = sandhi.sandhiTone;
+        }
+    } else {
+        for (let i = 0; i < N - 1; i++) {
+            const sandhi = calculateSandhiSyllable(words[i].initial, words[i].rhyme, words[i].tone);
+            results[i].init = sandhi.sandhiInitial;
+            results[i].rhyme = sandhi.sandhiRhyme;
+            results[i].tone = sandhi.sandhiTone;
+        }
+    }
+    return results;
+}
+
+function parseSyllableText(str) {
+    let s = str.toLowerCase().trim();
+    if (!s) return null;
+    
+    let isNeutral = false;
+    if (s.startsWith('--')) {
+        isNeutral = true;
+        s = s.slice(2);
+    }
+    
+    let tone = null;
+    const matchDigit = s.match(/([1-8])$/);
+    if (matchDigit) {
+        tone = parseInt(matchDigit[1]);
+        s = s.slice(0, -1);
+    } else {
+        const nfd = s.normalize('NFD');
+        if (nfd.includes('\u0301') || /[áéíóúḿń]/.test(s)) tone = 2;
+        else if (nfd.includes('\u0300') || /[àèìòùǹ]/.test(s)) tone = 3;
+        else if (nfd.includes('\u0302') || /[âêîôû]/.test(s)) tone = 5;
+        else if (nfd.includes('\u0304') || /[āēīōū]/.test(s)) tone = 7;
+        else if (nfd.includes('\u030d') || s.includes('̍')) tone = 8;
+    }
+    
+    s = s.replace(/\u0358/g, 'o').replace(/o͘/g, 'oo').replace(/ⁿ/g, 'nn');
+    let base = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
+    
+    if (tone === null) {
+        if (base.endsWith('p') || base.endsWith('t') || base.endsWith('k') || base.endsWith('h')) {
+            tone = (s.normalize('NFD').includes('\u030d') || s.includes('̍')) ? 8 : 4;
+        } else {
+            tone = 1;
+        }
+    }
+    
+    const initials = ['tsh', 'chh', 'ts', 'ch', 'kh', 'ph', 'th', 'ng', 'b', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 's', 't'];
+    let initial = "";
+    let rhymePart = base;
+    
+    for (let init of initials) {
+        if (base.startsWith(init)) {
+            initial = init;
+            rhymePart = base.slice(init.length);
+            break;
+        }
+    }
+    
+    if (initial === 'ch') initial = 'ts';
+    if (initial === 'chh') initial = 'tsh';
+    
+    const rhymeMap = {
+        'ann': 'aⁿ', 'enn': 'eⁿ', 'inn': 'iⁿ', 'oonn': 'o͘ⁿ', 'onn': 'oⁿ',
+        'uann': 'uaⁿ', 'uinn': 'uiⁿ', 'uenn': 'ueⁿ', 'iaunn': 'iauⁿ',
+        'iann': 'iaⁿ', 'iunn': 'iuⁿ', 'ainn': 'aiⁿ', 'uainn': 'uaiⁿ',
+        'annh': 'aⁿh', 'ennh': 'eⁿh', 'iannh': 'iaⁿh',
+        'o͘': 'oo', 'o•': 'oo',
+        'oa': 'ua', 'oe': 'ue', 'oai': 'uai', 'oan': 'uan', 'oat': 'uat', 'oah': 'uah',
+        'oann': 'uaⁿ', 'oenn': 'ueⁿ', 'oainn': 'uaiⁿ', 'oannh': 'uaⁿh',
+        'eng': 'ing', 'ek': 'ik'
+    };
+    
+    let rhyme = rhymeMap[rhymePart] || rhymePart;
+    return { initial, rhyme, tone, isNeutral };
+}
+
+function getAudioId(initial, rhyme, targetTone, baseTone) {
+    let base = (initial + rhyme).toLowerCase();
+    base = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
+    base = base.replace(/o͘/g, 'oo').replace(/o•/g, 'oo').replace(/ⁿ/g, 'nn');
+    
+    let key = base + targetTone;
+    if (syllableAudioMap[key]) return { id: syllableAudioMap[key], matchType: 'target', playedTone: targetTone };
+    
+    if (baseTone) {
+        let baseSpell = base;
+        if ([4, 8].includes(parseInt(baseTone)) && !base.endsWith('p') && !base.endsWith('t') && !base.endsWith('k') && !base.endsWith('h')) {
+            baseSpell = base + 'h';
+        }
+        key = baseSpell + baseTone;
+        if (syllableAudioMap[key]) return { id: syllableAudioMap[key], matchType: 'base_fallback', playedTone: baseTone };
+    }
+    
+    const fallbackTones = [1, 2, 3, 5, 7, 8, 4];
+    for (let t of fallbackTones) {
+        let baseSpell = base;
+        if ([4, 8].includes(parseInt(t)) && !base.endsWith('p') && !base.endsWith('t') && !base.endsWith('k') && !base.endsWith('h')) {
+            baseSpell = base + 'h';
+        }
+        key = baseSpell + t;
+        if (syllableAudioMap[key]) return { id: syllableAudioMap[key], matchType: 'any_fallback', playedTone: t };
+    }
+    
+    return { id: null, matchType: 'none', playedTone: null };
+}
+
+function getAudioIdsForPoj(poj) {
+    const parts = poj.trim().split(/[- \s]+/);
+    const words = [];
+    for (let part of parts) {
+        if (!part) continue;
+        const parsed = parseSyllableText(part);
+        if (parsed) words.push(parsed);
+    }
+    const sandhiWords = calculateMultiSandhi(words);
+    const audioIds = [];
+    for (let i = 0; i < words.length; i++) {
+        const audioObj = getAudioId(sandhiWords[i].init, sandhiWords[i].rhyme, sandhiWords[i].tone, words[i].tone);
+        if (audioObj.id) audioIds.push(audioObj.id);
+    }
+    return audioIds;
+}
+
+function playTermAudio(poj, btnEl) {
+    if (poj.includes(' / ')) {
+        const subTerms = poj.split(' / ');
+        let idx = 0;
+        function playNextTerm() {
+            if (idx >= subTerms.length) return;
+            const audioIds = getAudioIdsForPoj(subTerms[idx].trim());
+            
+            let activeBtn = btnEl;
+            if (btnEl && btnEl.classList.contains('play-btn-group')) {
+                const subs = btnEl.querySelectorAll('.play-btn.sub');
+                if (subs[idx]) {
+                    subs.forEach(s => s.classList.remove('playing'));
+                    activeBtn = subs[idx];
+                }
+            }
+            
+            playAudioSequence(audioIds, activeBtn, () => {
+                idx++;
+                setTimeout(playNextTerm, 600);
+            });
+        }
+        playNextTerm();
+    } else {
+        const audioIds = getAudioIdsForPoj(poj);
+        playAudioSequence(audioIds, btnEl);
+    }
+}
+
+/* ============ AUDIO PLAYER ============ */
+let currentAudio = null;
+let currentPlayBtn = null;
+
+function playAudioSequence(audioIds, btnEl, onEnded) {
+  const validAudioIds = (audioIds || []).filter(id => id != null);
+  if (validAudioIds.length === 0) {
+    if (onEnded) onEnded();
+    return;
+  }
+
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (currentPlayBtn) { currentPlayBtn.classList.remove('playing'); currentPlayBtn = null; }
+  if (btnEl) { currentPlayBtn = btnEl; btnEl.classList.add('playing'); }
+
+  let idx = 0;
+  function playNextSyllable() {
+    if (idx >= validAudioIds.length) {
+      if (btnEl) btnEl.classList.remove('playing');
+      if (onEnded) onEnded();
+      return;
+    }
+    const id = validAudioIds[idx];
+    const url = `https://chhoetaigi.github.io/KipSutianDataMirror/public/20260503-2330/imtong/sutiau/${id}.mp3`;
+    const audio = new Audio();
+    currentAudio = audio;
+
+    let timer = setTimeout(() => {
+      audio.pause();
+      console.warn(`Audio timed out for ID ${id}`);
+      idx++;
+      playNextSyllable();
+    }, 3000);
+
+    audio.addEventListener('ended', () => { clearTimeout(timer); idx++; playNextSyllable(); });
+    audio.addEventListener('error', () => { clearTimeout(timer); idx++; playNextSyllable(); });
+    audio.addEventListener('canplaythrough', () => clearTimeout(timer));
+
+    audio.src = url;
+    const speed = parseFloat(document.getElementById('speedRate').value) || 0.8;
+    audio.playbackRate = speed;
+    audio.play().catch(() => { clearTimeout(timer); idx++; playNextSyllable(); });
+  }
+  playNextSyllable();
+}
+
+/* ============ LEARN CARDS ============ */
+
+function renderCards(){
+
+  const cat = CATS.find(c=>c.id===state.activeCat);
+
+  const grid = document.getElementById('cardGrid');
+
+  grid.innerHTML = cat.terms.map(t => {
+
+    const key = termKey(t);
+
+    const starred = state.starred.includes(key);
+
+    
+
+    let playBtnHtml = '';
+
+    if (t.poj.includes(' / ')) {
+
+      const subParts = t.poj.split(' / ');
+
+      playBtnHtml = `<span class="play-btn-group">` + subParts.map((sub, sIdx) => 
+
+        `<span class="play-btn sub" data-poj="${sub.trim()}" title="Play ${sub.trim()}">🔊${sIdx+1}</span>`
+
+      ).join('') + `</span>`;
+
+    } else {
+
+      playBtnHtml = `<span class="play-btn" data-poj="${t.poj}" title="Play pronunciation">🔊</span>`;
+
+    }
+
+
+
+    return `<button class="card ${starred?'starred':''}" data-key="${key}" aria-label="${t.han} ${t.en}, tap to flip">
+
+      <span class="star-btn" data-star="${key}">${starred?'★':'☆'}</span>
+
+      ${playBtnHtml}
+
+      <div class="card-inner">
+
+        <div class="card-face card-front">
+
+          ${shapeSVG(t.shape, cat.color)}
+
+          <div class="han">${t.han}</div>
+
+          <div class="poj">${t.poj}</div>
+
+        </div>
+
+        <div class="card-face card-back">
+
+          <div class="zh">${t.zh}</div>
+
+          <div class="en">${t.en}</div>
+
+          <div class="note">${t.note}</div>
+
+        </div>
+
+      </div>
+
+    </button>`;
+
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach(card => {
+
+    card.addEventListener('click', (e) => {
+
+      if(e.target.dataset.star || e.target.classList.contains('play-btn') || e.target.closest('.play-btn')) return;
+
+      card.classList.toggle('flipped');
+
+    });
+
+  });
+
+  grid.querySelectorAll('[data-star]').forEach(btn => {
+
+    btn.addEventListener('click', (e) => {
+
+      e.stopPropagation();
+
+      toggleStar(btn.dataset.star);
+
+    });
+
+  });
+
+  grid.querySelectorAll('.play-btn').forEach(btn => {
+
+    btn.addEventListener('click', (e) => {
+
+      e.stopPropagation();
+
+      const poj = btn.dataset.poj;
+
+      playTermAudio(poj, btn);
+
+    });
+
+  });
+
+  // Bind parent group clicks
+
+  grid.querySelectorAll('.play-btn-group').forEach(group => {
+
+    group.addEventListener('click', (e) => {
+
+      e.stopPropagation();
+
+      // Clicked on group container directly, play all synonyms sequentially
+
+      // Generate a concatenated list or trigger seq play
+
+      const subPojs = [];
+
+      group.querySelectorAll('.play-btn.sub').forEach(btn => {
+
+        subPojs.push(btn.dataset.poj);
+
+      });
+
+      playTermAudio(subPojs.join(' / '), group);
+
+    });
+
+  });
+
+  // Bind parent group clicks
+
+  grid.querySelectorAll('.play-btn-group').forEach(group => {
+
+    group.addEventListener('click', (e) => {
+
+      e.stopPropagation();
+
+      // Clicked on group container directly, play all synonyms sequentially
+
+      // Generate a concatenated list or trigger seq play
+
+      const subPojs = [];
+
+      group.querySelectorAll('.play-btn.sub').forEach(btn => {
+
+        subPojs.push(btn.dataset.poj);
+
+      });
+
+      playTermAudio(subPojs.join(' / '), group);
+
+    });
+
+  });
+
+}
+
+function toggleStar(key){
+
+  const i = state.starred.indexOf(key);
+
+  if(i>-1) state.starred.splice(i,1); else state.starred.push(key);
+
+  localStorage.setItem('tgc_starred', JSON.stringify(state.starred));
+
+  renderCards();
+
+  updateProgress();
+
+}
+
+function updateProgress(){
+
+  const pct = Math.round(100 * state.starred.length / ALL_TERMS.length);
+
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  document.getElementById('progressCount').textContent = `${state.starred.length} / ${ALL_TERMS.length}`;
+
+}
+
+
+
+/* ============ MATCH GAME ============ */
+
+let gameSel = [];
+
+let gameMatched = new Set();
+
+function renderGame(){
+
+  const cat = CATS.find(c=>c.id===state.activeCat);
+
+  const terms = shuffle(cat.terms.slice(0, 6));
+
+  gameSel = [];
+
+  gameMatched = new Set();
+
+  document.getElementById('gameStatus').textContent = 'Pick a shape, then pick its name.';
+
+  const shapeTiles = terms.map(t => ({type:'shape', term:t}));
+
+  const nameTiles = shuffle(terms.map(t => ({type:'name', term:t})));
+
+  const combined = shuffle([...shapeTiles, ...nameTiles]);
+
+  const grid = document.getElementById('gameGrid');
+
+  grid.innerHTML = combined.map((tile, idx) => {
+
+    const t = tile.term;
+
+    const content = tile.type==='shape'
+
+      ? shapeSVG(t.shape, cat.color)
+
+      : `<span>${t.poj}</span>`;
+
+    return `<div class="tile" data-idx="${idx}" data-key="${termKey(t)}" data-type="${tile.type}">${content}</div>`;
+
+  }).join('');
+
+  grid.querySelectorAll('.tile').forEach(tile => tile.addEventListener('click', () => onTileClick(tile)));
+
+}
+
+function onTileClick(tile){
+
+  if(tile.dataset.state === 'matched') return;
+
+  if(gameSel.find(s => s.el === tile)) return;
+
+  tile.dataset.state = 'selected';
+
+  gameSel.push({el:tile, key:tile.dataset.key, type:tile.dataset.type});
+
+  
+
+  // Play sound on click
+
+  const term = ALL_TERMS.find(t => termKey(t) === tile.dataset.key);
+
+  if(term){
+
+    playTermAudio(term.poj, tile);
+
+  }
+
+  
+
+  if(gameSel.length === 2){
+
+    const [a,b] = gameSel;
+
+    if(a.key === b.key && a.type !== b.type){
+
+      a.el.dataset.state = 'matched';
+
+      b.el.dataset.state = 'matched';
+
+      gameMatched.add(a.key);
+
+      document.getElementById('gameStatus').textContent = `✓ Matched! (${gameMatched.size}/6)`;
+
+      gameSel = [];
+
+      if(gameMatched.size === 6){
+
+        document.getElementById('gameStatus').textContent = '🎉 全部配對成功！All matched — great job!';
+
+      }
+
+    } else {
+
+      document.getElementById('gameStatus').textContent = 'Not quite — try again.';
+
+      setTimeout(() => {
+
+        a.el.dataset.state = ''; b.el.dataset.state = '';
+
+        gameSel = [];
+
+      }, 550);
+
+    }
+
+  }
+
+}
+
+function shuffle(arr){
+
+  const a = arr.slice();
+
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+
+  return a;
+
+}
+
+document.getElementById('reshuffleBtn').addEventListener('click', renderGame);
+
+
+
+/* ============ TABS ============ */
+
+document.querySelectorAll('.tab').forEach(tab => {
+
+  tab.addEventListener('click', () => {
+
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t===tab));
+
+    ['learn','game','help'].forEach(name => {
+
+      document.getElementById('panel-'+name).style.display = (name===tab.dataset.tab) ? '' : 'none';
+
+    });
+
+    if(tab.dataset.tab === 'game') renderGame();
+
+  });
+
+});
+
+
+
+/* ============ HELP DEMO ============ */
+
+function renderDemo(){
+
+  const t = ALL_TERMS[0];
+
+  document.getElementById('demoBox').innerHTML = `
+
+    ${shapeSVG(t.shape, '#F5A623')}
+
+    <div>
+
+      <strong>${t.han}</strong> (<em>${t.poj}</em>) — ${t.zh} / ${t.en}<br>
+
+      <span style="font-size:.8rem;">${t.note}</span>
+
+    </div>`;
+
+}
+
+document.getElementById('helpBtn').addEventListener('click', () => {
+
+  document.querySelector('.tab[data-tab="help"]').click();
+
+});
+
+
+
+/* ============ EXPORT ============ */
+
+function buildGlossary(){
+
+  return ALL_TERMS.map(t => ({
+
+    category: CATS.find(c=>c.id===t.cat).zh,
+
+    taigi_poj: t.poj,
+
+    han: t.han,
+
+    mandarin: t.zh,
+
+    english: t.en,
+
+    note: t.note,
+
+    starred: state.starred.includes(termKey(t))
+
+  }));
+
+}
+
+function download(filename, text, mime){
+
+  const blob = new Blob([text], {type: mime});
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url; a.download = filename;
+
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+
+}
+
+document.getElementById('exportJsonBtn').addEventListener('click', () => {
+
+  download('taigi-geometry-glossary.json', JSON.stringify(buildGlossary(), null, 2), 'application/json');
+
+});
+
+document.getElementById('exportMdBtn').addEventListener('click', () => {
+
+  let md = `# 形數羅盤 Glossary — Taigi Geometry & Math Terms\n\n`;
+
+  CATS.forEach(cat => {
+
+    md += `## ${cat.zh} ${cat.en}\n\n| Taigi (POJ) | 漢字 | 華文 | English | Note | ⭐ |\n|---|---|---|---|---|---|\n`;
+
+    cat.terms.forEach(t => {
+
+      const star = state.starred.includes(termKey(t)) ? '★' : '';
+
+      md += `| ${t.poj} | ${t.han} | ${t.zh} | ${t.en} | ${t.note} | ${star} |\n`;
+
+    });
+
+    md += `\n`;
+
+  });
+
+  download('taigi-geometry-glossary.md', md, 'text/markdown');
+
+});
+
+
+
+// Speed slider display listener
+
+const speedSlider = document.getElementById('speedRate');
+
+const speedValDisplay = document.getElementById('speedValue');
+
+speedSlider.addEventListener('input', () => {
+
+  speedValDisplay.textContent = speedSlider.value + 'x';
+
+});
+
+
+
+/* ============ INIT ============ */
+
+applyTheme();
+
+buildCompass();
+
+buildMobileChips();
+
+renderCards();
+
+updateProgress();
+
+renderDemo();
+
+</script>
+
+</body>
+
+</html>
+
