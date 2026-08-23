@@ -1,5 +1,7 @@
 # 🧭 形數羅盤 (Shape & Number Compass) — 台語數學探索
 
+> 🔗 **線上體驗 (GitHub Pages)**: [https://sinliongtoo.github.io/Taigi_hengchong_sngsut/](https://sinliongtoo.github.io/Taigi_hengchong_sngsut/)
+
 形數羅盤 is a responsive, interactive web application designed to teach kids and language learners geometry and basic math terminology in four representations simultaneously: **Tâi-gí (白話字 POJ)**, **Han characters (漢字)**, **Mandarin (華文)**, and **English**.
 
 Designed for **@史秀里冊房 Tō͘ Sìn-liông 製作 2026**.
