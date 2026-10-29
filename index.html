@@ -931,8 +931,9 @@ footer.note{margin-top:22px;font-size:.72rem;color:var(--ink-soft);text-align:ce
   <footer class="note">
     <div>形數羅盤 · Built for curious kids learning geometry in Tâi-gí, 華文 &amp; English · @史秀里冊房 Tō͘ Sìn-liông 製作 2026</div>
     <div style="margin-top:6px;font-size:0.68rem;opacity:0.85;line-height:1.4;">
-      台語語音音檔來源：中華民國教育部《<a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">臺灣台語常用詞辭典</a>》。<br>
-      音檔著作權歸屬中華民國教育部所有，本專案僅供教育推廣、語言學習與非商業用途使用。
+      台語語音音檔來源：中華民國教育部《<a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">臺灣台語常用詞辭典</a>》官方真人發音（版本：20261019-0109）與 Web Speech API 擬真備援技術。<br>
+      音檔著作權歸屬中華民國教育部所有，本專案僅供教育推廣、語言學習與非商業用途使用。<br>
+      <span style="opacity:0.75;">🕒 最後更新日期 (Last Updated): 2026-10-30</span>
     </div>
   </footer>
 
@@ -1816,7 +1817,8 @@ function playTermAudio(poj, btnEl) {
         let idx = 0;
         function playNextTerm() {
             if (idx >= subTerms.length) return;
-            const audioIds = getAudioIdsForPoj(subTerms[idx].trim());
+            const subPoj = subTerms[idx].trim();
+            const audioIds = getAudioIdsForPoj(subPoj);
             
             let activeBtn = btnEl;
             if (btnEl && btnEl.classList.contains('play-btn-group')) {
@@ -1827,62 +1829,191 @@ function playTermAudio(poj, btnEl) {
                 }
             }
             
+            const matched = (typeof ALL_TERMS !== 'undefined') ? ALL_TERMS.find(t => t.poj && t.poj.includes(subPoj)) : null;
+            const fallbackText = matched ? (matched.han || matched.zh) : subPoj;
+
             playAudioSequence(audioIds, activeBtn, () => {
                 idx++;
-                setTimeout(playNextTerm, 600);
-            });
+                setTimeout(playNextTerm, 400);
+            }, fallbackText);
         }
         playNextTerm();
     } else {
         const audioIds = getAudioIdsForPoj(poj);
-        playAudioSequence(audioIds, btnEl);
+        const matched = (typeof ALL_TERMS !== 'undefined') ? ALL_TERMS.find(t => t.poj && (t.poj === poj || t.poj.includes(poj))) : null;
+        const fallbackText = matched ? (matched.han || matched.zh) : poj;
+        playAudioSequence(audioIds, btnEl, null, fallbackText);
     }
 }
 
 /* ============ AUDIO PLAYER ============ */
-let currentAudio = null;
+// MOE Taigi Audio CDN Version Configuration (per taiwanese-moe-audio skill)
+const MOE_AUDIO_CDN_VERSION = "20261019-0109";
+const MOE_AUDIO_CDN_BASE = `https://chhoetaigi.github.io/KipSutianDataMirror/public/${MOE_AUDIO_CDN_VERSION}/imtong/sutiau/`;
+
+let audioCtx = null;
+const audioBufferCache = new Map();
+let currentQueueToken = 0;
+let activeSourceNodes = [];
+let audioEndTimer = null;
 let currentPlayBtn = null;
 
-function playAudioSequence(audioIds, btnEl, onEnded) {
-  const validAudioIds = (audioIds || []).filter(id => id != null);
-  if (validAudioIds.length === 0) {
-    if (onEnded) onEnded();
-    return;
-  }
-
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  if (currentPlayBtn) { currentPlayBtn.classList.remove('playing'); currentPlayBtn = null; }
-  if (btnEl) { currentPlayBtn = btnEl; btnEl.classList.add('playing'); }
-
-  let idx = 0;
-  function playNextSyllable() {
-    if (idx >= validAudioIds.length) {
-      if (btnEl) btnEl.classList.remove('playing');
-      if (onEnded) onEnded();
-      return;
+function getAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    const id = validAudioIds[idx];
-    const url = `https://chhoetaigi.github.io/KipSutianDataMirror/public/20260503-2330/imtong/sutiau/${id}.mp3`;
-    const audio = new Audio();
-    currentAudio = audio;
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
 
-    let timer = setTimeout(() => {
-      audio.pause();
-      console.warn(`Audio timed out for ID ${id}`);
-      idx++;
-      playNextSyllable();
-    }, 3000);
+// Strip leading and trailing silent pads from MOE dictionary MP3 recordings
+function trimAudioBuffer(ctx, buffer, threshold = 0.015) {
+    const channelData = buffer.getChannelData(0);
+    const len = channelData.length;
+    let start = 0;
+    let end = len - 1;
 
-    audio.addEventListener('ended', () => { clearTimeout(timer); idx++; playNextSyllable(); });
-    audio.addEventListener('error', () => { clearTimeout(timer); idx++; playNextSyllable(); });
-    audio.addEventListener('canplaythrough', () => clearTimeout(timer));
+    while (start < len && Math.abs(channelData[start]) < threshold) start++;
+    while (end > start && Math.abs(channelData[end]) < threshold) end--;
 
-    audio.src = url;
-    const speed = parseFloat(document.getElementById('speedRate').value) || 0.8;
-    audio.playbackRate = speed;
-    audio.play().catch(() => { clearTimeout(timer); idx++; playNextSyllable(); });
-  }
-  playNextSyllable();
+    // Keep safe safety margin (~15ms)
+    const margin = Math.floor(buffer.sampleRate * 0.015);
+    start = Math.max(0, start - margin);
+    end = Math.min(len, end + margin);
+
+    const trimmedLength = end - start;
+    if (trimmedLength <= 0) return buffer;
+
+    const trimmed = ctx.createBuffer(buffer.numberOfChannels, trimmedLength, buffer.sampleRate);
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+        trimmed.copyToChannel(buffer.getChannelData(c).subarray(start, end), c);
+    }
+    return trimmed;
+}
+
+// Fetch and decode with in-memory AudioBuffer caching
+async function fetchAndDecodeAudio(id) {
+    const cleanId = String(id).includes('(') ? id : `${id}(1)`;
+    if (audioBufferCache.has(cleanId)) return audioBufferCache.get(cleanId);
+
+    const url = `${MOE_AUDIO_CDN_BASE}${cleanId}.mp3`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} for ${cleanId}`);
+    const arrayBuffer = await res.arrayBuffer();
+    const ctx = getAudioContext();
+    const decoded = await ctx.decodeAudioData(arrayBuffer);
+    const trimmed = trimAudioBuffer(ctx, decoded);
+    audioBufferCache.set(cleanId, trimmed);
+    return trimmed;
+}
+
+function stopCurrentPlayback() {
+    currentQueueToken++;
+    if (audioEndTimer) {
+        clearTimeout(audioEndTimer);
+        audioEndTimer = null;
+    }
+    activeSourceNodes.forEach(node => {
+        try { node.stop(); } catch(e) {}
+    });
+    activeSourceNodes = [];
+    if (currentPlayBtn) {
+        currentPlayBtn.classList.remove('playing');
+        currentPlayBtn = null;
+    }
+    if ('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
+        window.speechSynthesis.cancel();
+    }
+}
+
+// Offline fallback voice with Taiwanese homophones via Web Speech API
+const twHomophones = {
+    "正方形": "正方形", "長方形": "短方形", "圓形": "圓形", "橢圓形": "橢圓形",
+    "三角形": "三角形", "等腰": "等腰", "梯形": "梯形", "菱形": "菱形",
+    "直線": "直線", "曲線": "曲線", "平行": "平行", "垂直": "垂滴",
+    "九九算": "九九算", "奇數": "奇數", "偶數": "偶數", "分數": "分數",
+    "整數": "整數", "倍數": "倍數", "面積": "面積", "體積": "體積"
+};
+
+function playOfflineVoiceFallback(text) {
+    if (!('speechSynthesis' in window)) return;
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
+    }
+    let phoneticText = text || "";
+    const sortedKeys = Object.keys(twHomophones).sort((a, b) => b.length - a.length);
+    sortedKeys.forEach(key => {
+        phoneticText = phoneticText.replace(new RegExp(key, 'g'), twHomophones[key]);
+    });
+
+    const utterance = new SpeechSynthesisUtterance(phoneticText);
+    utterance.lang = "zh-TW";
+    const speed = parseFloat(document.getElementById('speedRate')?.value) || 0.8;
+    utterance.rate = speed;
+    window.speechSynthesis.speak(utterance);
+}
+
+// Seamless gapless scheduler supporting variable playback speed & fallback
+async function playAudioSequence(audioIds, btnEl, onEnded, fallbackText = '') {
+    const validAudioIds = (audioIds || []).filter(id => id != null);
+    if (validAudioIds.length === 0) {
+        if (fallbackText) playOfflineVoiceFallback(fallbackText);
+        if (onEnded) onEnded();
+        return;
+    }
+
+    stopCurrentPlayback();
+    const token = currentQueueToken;
+
+    if (btnEl) {
+        currentPlayBtn = btnEl;
+        btnEl.classList.add('playing');
+    }
+
+    const speed = parseFloat(document.getElementById('speedRate')?.value) || 0.8;
+
+    try {
+        const ctx = getAudioContext();
+        // Load all syllable audio buffers in parallel
+        const buffers = await Promise.all(validAudioIds.map(id => fetchAndDecodeAudio(id)));
+        if (token !== currentQueueToken) return;
+
+        let startTime = ctx.currentTime + 0.05;
+        let totalDuration = 0.05;
+
+        buffers.forEach((buf) => {
+            const source = ctx.createBufferSource();
+            source.buffer = buf;
+            source.playbackRate.value = speed;
+            source.connect(ctx.destination);
+            source.start(startTime);
+            activeSourceNodes.push(source);
+            const dur = buf.duration / speed;
+            startTime += dur;
+            totalDuration += dur;
+        });
+
+        audioEndTimer = setTimeout(() => {
+            if (token === currentQueueToken) {
+                if (btnEl) btnEl.classList.remove('playing');
+                if (currentPlayBtn === btnEl) currentPlayBtn = null;
+                if (onEnded) onEnded();
+            }
+        }, totalDuration * 1000);
+
+    } catch (err) {
+        console.warn('Web Audio playback failed, routing to speech synthesis fallback:', err);
+        if (token === currentQueueToken) {
+            if (btnEl) btnEl.classList.remove('playing');
+            if (currentPlayBtn === btnEl) currentPlayBtn = null;
+            if (fallbackText) {
+                playOfflineVoiceFallback(fallbackText);
+            }
+            if (onEnded) onEnded();
+        }
+    }
 }
 
 /* ============ LEARN CARDS ============ */
