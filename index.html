@@ -1857,40 +1857,41 @@ let currentQueueToken = 0;
 let activeSourceNodes = [];
 let audioEndTimer = null;
 let currentPlayBtn = null;
+let currentHtmlAudio = null;
 
 function getAudioContext() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
     }
     return audioCtx;
 }
 
 // Strip leading and trailing silent pads from MOE dictionary MP3 recordings
 function trimAudioBuffer(ctx, buffer, threshold = 0.015) {
-    const channelData = buffer.getChannelData(0);
-    const len = channelData.length;
-    let start = 0;
-    let end = len - 1;
+    try {
+        const channelData = buffer.getChannelData(0);
+        const len = channelData.length;
+        let start = 0;
+        let end = len - 1;
 
-    while (start < len && Math.abs(channelData[start]) < threshold) start++;
-    while (end > start && Math.abs(channelData[end]) < threshold) end--;
+        while (start < len && Math.abs(channelData[start]) < threshold) start++;
+        while (end > start && Math.abs(channelData[end]) < threshold) end--;
 
-    // Keep safe safety margin (~15ms)
-    const margin = Math.floor(buffer.sampleRate * 0.015);
-    start = Math.max(0, start - margin);
-    end = Math.min(len, end + margin);
+        const margin = Math.floor(buffer.sampleRate * 0.015);
+        start = Math.max(0, start - margin);
+        end = Math.min(len, end + margin);
 
-    const trimmedLength = end - start;
-    if (trimmedLength <= 0) return buffer;
+        const trimmedLength = end - start;
+        if (trimmedLength <= 0) return buffer;
 
-    const trimmed = ctx.createBuffer(buffer.numberOfChannels, trimmedLength, buffer.sampleRate);
-    for (let c = 0; c < buffer.numberOfChannels; c++) {
-        trimmed.copyToChannel(buffer.getChannelData(c).subarray(start, end), c);
+        const trimmed = ctx.createBuffer(buffer.numberOfChannels, trimmedLength, buffer.sampleRate);
+        for (let c = 0; c < buffer.numberOfChannels; c++) {
+            trimmed.copyToChannel(buffer.getChannelData(c).subarray(start, end), c);
+        }
+        return trimmed;
+    } catch(e) {
+        return buffer;
     }
-    return trimmed;
 }
 
 // Fetch and decode with in-memory AudioBuffer caching
@@ -1903,6 +1904,9 @@ async function fetchAndDecodeAudio(id) {
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${cleanId}`);
     const arrayBuffer = await res.arrayBuffer();
     const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+        await ctx.resume();
+    }
     const decoded = await ctx.decodeAudioData(arrayBuffer);
     const trimmed = trimAudioBuffer(ctx, decoded);
     audioBufferCache.set(cleanId, trimmed);
@@ -1919,6 +1923,10 @@ function stopCurrentPlayback() {
         try { node.stop(); } catch(e) {}
     });
     activeSourceNodes = [];
+    if (currentHtmlAudio) {
+        try { currentHtmlAudio.pause(); } catch(e) {}
+        currentHtmlAudio = null;
+    }
     if (currentPlayBtn) {
         currentPlayBtn.classList.remove('playing');
         currentPlayBtn = null;
@@ -1928,7 +1936,69 @@ function stopCurrentPlayback() {
     }
 }
 
-// Offline fallback voice with Taiwanese homophones via Web Speech API
+// Tier 2 Fallback: Standard HTML5 Audio sequential player (works with file:// and zero CORS)
+function playAudioHTML5(validAudioIds, btnEl, onEnded, fallbackText = '') {
+    if (validAudioIds.length === 0) {
+        if (fallbackText) playOfflineVoiceFallback(fallbackText);
+        if (onEnded) onEnded();
+        return;
+    }
+    const token = currentQueueToken;
+    let idx = 0;
+    const speed = parseFloat(document.getElementById('speedRate')?.value) || 0.8;
+
+    function playNext() {
+        if (token !== currentQueueToken) return;
+        if (idx >= validAudioIds.length) {
+            if (btnEl) btnEl.classList.remove('playing');
+            if (currentPlayBtn === btnEl) currentPlayBtn = null;
+            if (onEnded) onEnded();
+            return;
+        }
+        const id = validAudioIds[idx];
+        const cleanId = String(id).includes('(') ? id : `${id}(1)`;
+        const url = `${MOE_AUDIO_CDN_BASE}${cleanId}.mp3`;
+        const audio = new Audio(url);
+        currentHtmlAudio = audio;
+        audio.playbackRate = speed;
+
+        let timer = setTimeout(() => {
+            if (token !== currentQueueToken) return;
+            idx++;
+            playNext();
+        }, 3000);
+
+        audio.onended = () => {
+            clearTimeout(timer);
+            if (token !== currentQueueToken) return;
+            idx++;
+            playNext();
+        };
+        audio.onerror = () => {
+            clearTimeout(timer);
+            if (token !== currentQueueToken) return;
+            console.warn(`HTML5 audio failed for ${cleanId}, checking fallback...`);
+            idx++;
+            if (idx >= validAudioIds.length && fallbackText) {
+                playOfflineVoiceFallback(fallbackText);
+            }
+            playNext();
+        };
+        audio.play().catch(e => {
+            clearTimeout(timer);
+            if (token !== currentQueueToken) return;
+            console.warn(`audio.play() rejected for ${cleanId}:`, e);
+            idx++;
+            if (idx >= validAudioIds.length && fallbackText) {
+                playOfflineVoiceFallback(fallbackText);
+            }
+            playNext();
+        });
+    }
+    playNext();
+}
+
+// Tier 3 Fallback: Web Speech API with Taiwanese homophones
 const twHomophones = {
     "正方形": "正方形", "長方形": "短方形", "圓形": "圓形", "橢圓形": "橢圓形",
     "三角形": "三角形", "等腰": "等腰", "梯形": "梯形", "菱形": "菱形",
@@ -1955,7 +2025,7 @@ function playOfflineVoiceFallback(text) {
     window.speechSynthesis.speak(utterance);
 }
 
-// Seamless gapless scheduler supporting variable playback speed & fallback
+// Resilient gapless scheduler: Tier 1 (Web Audio) -> Tier 2 (HTML5 Audio) -> Tier 3 (Speech Synthesis)
 async function playAudioSequence(audioIds, btnEl, onEnded, fallbackText = '') {
     const validAudioIds = (audioIds || []).filter(id => id != null);
     if (validAudioIds.length === 0) {
@@ -1974,10 +2044,26 @@ async function playAudioSequence(audioIds, btnEl, onEnded, fallbackText = '') {
 
     const speed = parseFloat(document.getElementById('speedRate')?.value) || 0.8;
 
+    // Fast check: if not on https or localhost (e.g. file:// URL), browser may restrict fetch CORS
+    const isFileUrl = typeof window !== 'undefined' && window.location && window.location.protocol === 'file:';
+    const hasWebAudio = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+    
+    if (isFileUrl || !hasWebAudio) {
+        playAudioHTML5(validAudioIds, btnEl, onEnded, fallbackText);
+        return;
+    }
+
     try {
         const ctx = getAudioContext();
-        // Load all syllable audio buffers in parallel
-        const buffers = await Promise.all(validAudioIds.map(id => fetchAndDecodeAudio(id)));
+        if (ctx.state === 'suspended') {
+            await ctx.resume();
+        }
+
+        // Set timeout race: if parallel fetch takes over 2.5s, fall back to streaming HTML5 audio
+        const fetchPromise = Promise.all(validAudioIds.map(id => fetchAndDecodeAudio(id)));
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Audio fetch timeout')), 2500));
+        
+        const buffers = await Promise.race([fetchPromise, timeoutPromise]);
         if (token !== currentQueueToken) return;
 
         let startTime = ctx.currentTime + 0.05;
@@ -2004,14 +2090,9 @@ async function playAudioSequence(audioIds, btnEl, onEnded, fallbackText = '') {
         }, totalDuration * 1000);
 
     } catch (err) {
-        console.warn('Web Audio playback failed, routing to speech synthesis fallback:', err);
+        console.warn('Web Audio playback failed or timed out, routing to HTML5 audio fallback:', err);
         if (token === currentQueueToken) {
-            if (btnEl) btnEl.classList.remove('playing');
-            if (currentPlayBtn === btnEl) currentPlayBtn = null;
-            if (fallbackText) {
-                playOfflineVoiceFallback(fallbackText);
-            }
-            if (onEnded) onEnded();
+            playAudioHTML5(validAudioIds, btnEl, onEnded, fallbackText);
         }
     }
 }
